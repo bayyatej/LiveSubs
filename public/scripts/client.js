@@ -55,6 +55,7 @@ const showChatRoom = (room) => {
     // Hide room join form.
     formEl.hide();
     const html = chatTemplate({ room });
+    $('#chat-segment').addClass("right very wide sidebar visible")
     chatEl.html(html);
 
     // Post message for joining user.
@@ -229,4 +230,10 @@ window.addEventListener('load', () => {
         $(`#${id}`).html(video);
         remoteVideosCount += 1;
     });
+
+    // //You speak
+    // webrtc.on('volumeChange', function (volume, threshold)
+    // {
+
+    // });
 });
