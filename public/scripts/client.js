@@ -7,6 +7,8 @@ const formEl = $('.form');
 const messages = [];
 let userName = 'Undefined User';
 
+const ENTER_KEY = 13;
+
 // Local Video
 const localImageEl = $('#localImage');
 const localVideoEl = $('#localVideo');
@@ -29,14 +31,28 @@ const joinRoom = (roomName) => {
     showChatRoom(roomName);
 };
 
+// create our WebRTC connection
+const webrtc = new SimpleWebRTC({
+    // the id/element dom element that will hold "our" video
+    localVideoEl: 'localVideo',
+    // the id/element dom element that will hold remote videos
+    remoteVideosEl: 'remoteVideos',
+    // immediately ask for camera access
+    autoRequestMedia: true,
+});
+
 // Post Local Message
 const postClientMessage = (message) => {
-    let trimmedMsg = message.trim(); // Remove whitespace.
+    // Clear chat input field.
+    $('#msgField').val('');
 
-    if (trimmedMsg.length == 0) {
+    // Remove whitespace padding.
+    message = message.trim(); 
+
+    if (message.length == 0) {
         return;
     }
-
+    
     const msg = {
         userName,
         message
@@ -44,8 +60,6 @@ const postClientMessage = (message) => {
 
     // Send message to all peers.
     webrtc.sendToAll('chat', msg);
-    // Clear chat input field.
-    $('#msgField').val('');
     // Update our message list locally.
     messages.push(msg);
     updateChatMessages();
@@ -73,7 +87,7 @@ const showChatRoom = (room) => {
     });
     $('#msgField').on('keydown', (event) => {
         // Add listener for enter key.
-        if (event.keyCode === 13) {
+        if (event.keyCode === ENTER_KEY) {
             const message = $('#msgField').val();
             postClientMessage(message);
         }
@@ -91,23 +105,12 @@ const updateChatMessages = () => {
     chatContentEl.animate({ scrollTop: scrollHeight }, 150);
 };
 
-// create our WebRTC connection
-const webrtc = new SimpleWebRTC({
-    // the id/element dom element that will hold "our" video
-    localVideoEl: 'localVideo',
-    // the id/element dom element that will hold remote videos
-    remoteVideosEl: 'remoteVideos',
-    // immediately ask for camera access
-    autoRequestMedia: true,
-});
-
 window.addEventListener('load', () => {
     // Add validation rules to Create/Join Room Form
     formEl.form({
         fields: {
             roomName: 'empty',
-            userName: 'empty',
-            msgField: 'empty'
+            userName: 'empty'
         },
     });
 
