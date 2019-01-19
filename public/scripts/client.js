@@ -8,11 +8,13 @@ const chatEl = $('#chat');
 const formEl = $('.form');
 const messages = [];
 let userName = 'Undefined User';
-
+var idMap={};
 // Translation and speech.
 var lang_HTML5 = 'en-US';
 var lang_translate = "en";
-
+const languages={
+    "english":{translate:"en","html":"en-US"}
+}
 // Local Video
 const localImageEl = $('#localImage');
 const localVideoEl = $('#localVideo');
@@ -179,6 +181,7 @@ window.addEventListener('load', () => {
 
     // Remote video was added
     webrtc.on('videoAdded', (video, peer) => {
+        console.log(peer);
         const id = webrtc.getDomId(peer);
         const html = remoteVideoTemplate({ id });
         if (remoteVideosCount === 0) {
@@ -187,7 +190,6 @@ window.addEventListener('load', () => {
             remoteVideosEl.append(html);
         }
         $(`#${id}`).html(video);
-        $(`#${id} video`).addClass('ui image medium');
         remoteVideosCount += 1;
     });
 });
