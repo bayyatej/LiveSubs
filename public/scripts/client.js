@@ -14,8 +14,8 @@ var subtitle = document.getElementById('subtitle');
 // Translate -> Google Translate language code, HTML -> BCP-47.
 const languages = [
     { displayName: "English", translateLangCode: "en", htmlLangCode: "en-US" },
-    { displayName: "French", translateLangCode: "fr", htmlLangCode: "fr-FR" },
-    { displayName: "Chinese (Simplified)", translateLangCode: "zh-CN", htmlLangCode: "zh-CN" }
+    { displayName: "Français", translateLangCode: "fr", htmlLangCode: "fr-FR" },
+    { displayName: "中文 (简体)", translateLangCode: "zh-CN", htmlLangCode: "zh-CN" }
 ];
 
 var languageIndex = 0; // Default to English.
