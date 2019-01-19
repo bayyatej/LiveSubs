@@ -221,7 +221,7 @@ window.addEventListener('load', () => {
             messages.push(message);
             //setup hark to listen for user done speaking
             options = {}
-            var speech = hark(navigator.mediaDevices.getUserMedia, options)
+            var speech = hark(navigator.mediaDevices.getUserMedia(), options)
             speech.on('stopped_speaking', function() {
                 if (message.type==2){
                     subtitle.textContent=message.text;
