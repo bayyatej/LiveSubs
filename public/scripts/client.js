@@ -53,7 +53,8 @@ const showChatRoom = (room) => {
     // Hide room join form.
     formEl.hide();
     const html = chatTemplate({ room });
-    $('#chat-segment').addClass("right very wide sidebar visible")
+    $('#room-grid').removeClass("center aligned page")
+    $('#chat-segment').removeClass("login").addClass("right very wide sidebar visible")
     chatEl.html(html);
 
     // Post message for joining user.

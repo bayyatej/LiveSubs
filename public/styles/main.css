@@ -24,3 +24,8 @@ body {
     left: 3px;
     top: 3px;
 }
+.login {
+    position: relative;
+    top: 50%;
+    transform: translateY();
+}
