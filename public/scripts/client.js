@@ -9,7 +9,6 @@ const formEl = $('.form');
 const messages = [];
 let userName = 'Undefined User';
 var myUniqueId = "";
-var idMap = {};
 // Translation and speech.
 // Translate -> Google Translate language code, HTML -> BCP-47.
 const languages = [
@@ -55,7 +54,7 @@ const showChatRoom = (room) => {
     // Hide room join form.
     formEl.hide();
     const html = chatTemplate({ room });
-    $('#chat-segment').addClass("right very wide sidebar visible")
+    $('#chatSegment').addClass("right wide sidebar visible")
     chatEl.html(html);
 
     // Post message for joining user.
@@ -70,11 +69,12 @@ const showChatRoom = (room) => {
     updateChatMessages();
 
     $('#submitMsgBtn').on('click', () => {
+        // Add listener for clicking submit button.
         const message = $('#msgField').val();
         postClientMessage(message);
     });
     $('#msgField').on('keydown', (event) => {
-        // Add listener for enter key.
+        // Add listener for pressing enter key.
         if (event.keyCode === ENTER_KEY) {
             const message = $('#msgField').val();
             postClientMessage(message);

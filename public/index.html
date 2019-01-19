@@ -32,7 +32,7 @@
 
         <div class="ui two column stackable grid">
             <div class="ui ten wide column">
-                <div class="ui segment" id = "chat-segment">
+                <div id="chatSegment" class="ui segment">
                     <!-- Join Room Form -->
                     <div class="ui form">
                         <label>Display Name</label>
@@ -63,12 +63,12 @@
     <script id="chat-template" type="text/x-handlebars-template">
         <h3 class="ui blue header"><strong>{{ room }}</strong></h3>
         <hr>
-        <div id="chatList" class="ui feed" style="height:100px;overflow-y:scroll;"> </div>
+        <div id="chatList" class="ui feed" style="max-width:350px;height:75vh;overflow-x:hidden;overflow-y:scroll;"> </div>
 
         <div class="ui form">
             <div class="ui field grid">
-                <input type="text" id="msgField" name="msgField" data-lpignore="true" class="thirteen wide column">
-                <div id="submitMsgBtn" class="ui primary submit button two wide column" style="margin-left:5px;">Send</div>
+                <input type="text" id="msgField" name="msgField" data-lpignore="true" class="eleven wide column">
+                <div id="submitMsgBtn" class="ui primary submit button four wide column" style="margin-left:5px;">Send</div>
             </div>
         </div>
 
