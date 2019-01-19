@@ -1,4 +1,3 @@
-
 // Chat platform
 const chatTemplate = Handlebars.compile($('#chat-template').html());
 const chatContentTemplate = Handlebars.compile($('#chat-content-template').html());
@@ -6,6 +5,7 @@ const chatEl = $('#chat');
 const formEl = $('.form');
 const messages = [];
 let userName = 'Undefined User';
+
 
 // Local Video
 const localImageEl = $('#localImage');
@@ -40,7 +40,7 @@ const postClientMessage = (message) => {
     webrtc.sendToAll('chat', msg);
     // Clear chat input field.
     $('#msgField').val('');
-    // Update our message list locally.
+    // Update our message list locally. 
     messages.push(msg);
     updateChatMessages();
 };
@@ -99,6 +99,14 @@ const webrtc = new SimpleWebRTC({
     remoteVideosEl: 'remoteVideos',
     // immediately ask for camera access
     autoRequestMedia: true,
+    //detect speaking events
+    detectSpeakingEvents: true,
+});
+
+var speech = hark(stream, options);
+speech.on('speaking', function()
+{
+    console.log('Speaking!');
 });
 
 window.addEventListener('load', () => {
@@ -153,4 +161,10 @@ window.addEventListener('load', () => {
         $(`#${id} video`).addClass('ui image medium');
         remoteVideosCount += 1;
     });
+
+    // //You speak
+    // webrtc.on('volumeChange', function (volume, threshold)
+    // {
+
+    // });
 });
