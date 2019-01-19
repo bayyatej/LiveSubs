@@ -9,6 +9,7 @@
     "hark": "^1.2.3",
     "jquery": "^3.3.1",
     "semantic-ui-css": "^2.4.1",
+    "serve": "^10.1.1",
     "simplewebrtc": "^3.0.2"
   },
   "devDependencies": {},
