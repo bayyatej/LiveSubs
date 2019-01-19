@@ -241,10 +241,10 @@ window.addEventListener('load', () => {
 >>>>>>> 63e6dacecc183e02ea5bf889beef95c0efef628d
                     }
                     let newSpotlight=$('#'+id+"_video_incoming").detach();
-                    let oldSpotlight=$('#spotlight').html();
+                    let oldSpotlight=$('#spotlight').first().detach();
                     console.log(newSpotlight);
                     console.log(oldSpotlight);
-                    $('#spotlight').html(newSpotlight);
+                    $('#spotlight').append(newSpotlight);
                     $('#remoteVideos').append(oldSpotlight);
                 }
                 console.log('updated');
