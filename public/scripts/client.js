@@ -102,11 +102,12 @@ const webrtc = new SimpleWebRTC({
     //detect speaking events
     detectSpeakingEvents: true,
 });
-
-var speech = hark(stream, options);
-speech.on('speaking', function()
-{
-    console.log('Speaking!');
+webrtc.on('localStream', function (stream) {
+    options = {}
+    var speech = hark(stream, options);
+    speech.on('speaking', function () {
+        console.log('Speaking!');
+    });
 });
 
 window.addEventListener('load', () => {
