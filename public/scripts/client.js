@@ -1,9 +1,6 @@
-<<<<<<< HEAD
-=======
 // Global constants.
 const ENTER_KEY = 13;
 
->>>>>>> ff7493ef772533ed7c5641c33943917933ff0ac5
 // Chat platform
 const chatTemplate = Handlebars.compile($('#chat-template').html());
 const chatContentTemplate = Handlebars.compile($('#chat-content-template').html());
@@ -11,10 +8,6 @@ const chatEl = $('#chat');
 const formEl = $('.form');
 const messages = [];
 let userName = 'Undefined User';
-<<<<<<< HEAD
-
-
-=======
 var myUniqueId = "";
 var idMap = {};
 // Translation and speech.
@@ -24,7 +17,6 @@ const languages = {
     "English": { translate: "en", "html": "en-US" },
     "French": { translate: "fr", "html": "fr-FR" }
 }
->>>>>>> ff7493ef772533ed7c5641c33943917933ff0ac5
 // Local Video
 const localImageEl = $('#localImage');
 const localVideoEl = $('#localVideo');
@@ -47,23 +39,6 @@ const joinRoom = (roomName) => {
     showChatRoom(roomName);
 };
 
-<<<<<<< HEAD
-// Post Local Message
-const postClientMessage = (message) => {
-    const msg = {
-        userName,
-        message
-    };
-
-    // Send message to all peers.
-    webrtc.sendToAll('chat', msg);
-    // Clear chat input field.
-    $('#msgField').val('');
-    // Update our message list locally. 
-    messages.push(msg);
-    updateChatMessages();
-};
-=======
 // create our WebRTC connection
 const webrtc = new SimpleWebRTC({
     // the id/element dom element that will hold "our" video
@@ -73,12 +48,12 @@ const webrtc = new SimpleWebRTC({
     // immediately ask for camera access
     autoRequestMedia: true,
 });
->>>>>>> ff7493ef772533ed7c5641c33943917933ff0ac5
 
 const showChatRoom = (room) => {
     // Hide room join form.
     formEl.hide();
     const html = chatTemplate({ room });
+    $('#chat-segment').addClass("right very wide sidebar visible")
     chatEl.html(html);
 
     // Post message for joining user.
@@ -152,26 +127,6 @@ const updateChatMessages = () => {
     chatContentEl.animate({ scrollTop: scrollHeight }, 150);
 };
 
-<<<<<<< HEAD
-// create our WebRTC connection
-const webrtc = new SimpleWebRTC({
-    // the id/element dom element that will hold "our" video
-    localVideoEl: 'localVideo',
-    // the id/element dom element that will hold remote videos
-    remoteVideosEl: 'remoteVideos',
-    // immediately ask for camera access
-    autoRequestMedia: true,
-    //detect speaking events
-    detectSpeakingEvents: true,
-});
-webrtc.on('localStream', function (stream) {
-    options = {}
-    var speech = hark(stream, options);
-    speech.on('speaking', function () {
-        console.log('Speaking!');
-    });
-});
-=======
 function transmitSpeech(message) {
     message = message.trim(); // Remove whitespace.
 
@@ -200,7 +155,6 @@ function updateVideo(message) {
     }
     console.log(message);
 }
->>>>>>> ff7493ef772533ed7c5641c33943917933ff0ac5
 
 window.addEventListener('load', () => {
     Handlebars.registerHelper('equals', function (v1, v2, options) {
