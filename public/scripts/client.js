@@ -6,7 +6,8 @@ const chatEl = $('#chat');
 const formEl = $('.form');
 const messages = [];
 let userName = 'Undefined User';
-
+var lang_HTML5='en-US';
+var lang_
 // Local Video
 const localImageEl = $('#localImage');
 const localVideoEl = $('#localVideo');
@@ -44,7 +45,15 @@ const postClientMessage = (message) => {
     messages.push(msg);
     updateChatMessages();
 };
-
+function send () {
+    var number = {
+      value: document.getElementById('num').value
+    }
+    var xhr = new window.XMLHttpRequest()
+    xhr.open('POST', '/num', true)
+    xhr.setRequestHeader('Content-Type', 'application/json;charset=UTF-8')
+    xhr.send(JSON.stringify(number))
+  }
 // Display Chat Interface
 const showChatRoom = (room) => {
     // Hide room join form.
