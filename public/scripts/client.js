@@ -219,6 +219,16 @@ window.addEventListener('load', () => {
             messages.push(message);
             if (message.type==2){
                 subtitle.textContent=message.text;
+                let id=message.uniqueId;
+                if($('#'+id).length>1){
+                    if($('#'+id).parent().attr('id')=='spotlight'){
+                        return;
+                    }
+                    let newSpotlight=$('#'+id).detach();
+                    let oldSpotlight=$('#spotlight').html();
+                    $('#spotlight').html(newSpotlight);
+                    $('#remoteVideos').append(oldSpotlight);
+                }
                 console.log('updated');
             }
             //show this user
