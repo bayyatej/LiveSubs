@@ -1,6 +1,7 @@
 function beginSpeechRecognition() {
     console.log('began');
     window.SpeechRecognition = window.webkitSpeechRecognition || window.SpeechRecognition;
+    
     const recognition = new window.SpeechRecognition();
     // recognition.interimResults=true;
     recognition.onresult = (event) => {

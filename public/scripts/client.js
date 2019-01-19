@@ -217,20 +217,25 @@ window.addEventListener('load', () => {
             //translate data
             const message = data.payload;
             messages.push(message);
-            if (message.type==2){
-                subtitle.textContent=message.text;
-                let id=message.uniqueId;
-                if($('#'+id).length>1){
-                    if($('#'+id).parent().attr('id')=='spotlight'){
-                        return;
+            //setup hark to listen for user done speaking
+            options = {}
+            var speech = hark(navigator.mediaDevices.getUserMedia, options)
+            speech.on('stopped_speaking', function() {
+                if (message.type==2){
+                    subtitle.textContent=message.text;
+                    let id=message.uniqueId;
+                    if($('#'+id).length>1){
+                        if($('#'+id).parent().attr('id')=='spotlight'){
+                            return;
+                        }
+                        let newSpotlight=$('#'+id).detach();
+                        let oldSpotlight=$('#spotlight').html();
+                        $('#spotlight').html(newSpotlight);
+                        $('#remoteVideos').append(oldSpotlight);
                     }
-                    let newSpotlight=$('#'+id).detach();
-                    let oldSpotlight=$('#spotlight').html();
-                    $('#spotlight').html(newSpotlight);
-                    $('#remoteVideos').append(oldSpotlight);
+                    console.log('updated');
                 }
-                console.log('updated');
-            }
+            });
             //show this user
             updateChatMessages();
         }
@@ -248,10 +253,4 @@ window.addEventListener('load', () => {
         $(`#${id}`).html(video);
         remoteVideosCount += 1;
     });
-
-    // //You speak
-    // webrtc.on('volumeChange', function (volume, threshold)
-    // {
-
-    // });
 });
