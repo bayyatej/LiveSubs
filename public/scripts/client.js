@@ -10,6 +10,7 @@ const messages = [];
 let userName = 'Undefined User';
 var myUniqueId = "";
 var idMap = {};
+let subtitle=document.getElementById('subtitle');
 // Translation and speech.
 var lang_HTML5 = 'en-US';
 var lang_translate = "en";
@@ -200,15 +201,20 @@ window.addEventListener('load', () => {
     // Receive message from remote user
     webrtc.connection.on('message', (data) => {
         if (data.type === 'msg') {
+            //translate data
             const message = data.payload;
             messages.push(message);
+            if (message.type==2){
+                subtitle.textContent=message.text;
+                console.log('updated');
+            }
+            //show this user
             updateChatMessages();
         }
     });
 
     // Remote video was added
     webrtc.on('videoAdded', (video, peer) => {
-        console.log(peer);
         const id = webrtc.getDomId(peer);
         const html = remoteVideoTemplate({ id });
         if (remoteVideosCount === 0) {
