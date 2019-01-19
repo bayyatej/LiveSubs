@@ -1,3 +1,5 @@
+// Global constants.
+const ENTER_KEY = 13;
 
 // Chat platform
 const chatTemplate = Handlebars.compile($('#chat-template').html());
@@ -7,7 +9,9 @@ const formEl = $('.form');
 const messages = [];
 let userName = 'Undefined User';
 
-const ENTER_KEY = 13;
+// Translation and speech.
+var lang_HTML5 = 'en-US';
+var lang_translate = "en";
 
 // Local Video
 const localImageEl = $('#localImage');
@@ -47,24 +51,33 @@ const postClientMessage = (message) => {
     $('#msgField').val('');
 
     // Remove whitespace padding.
-    message = message.trim(); 
+    message = message.trim();
 
     if (message.length == 0) {
         return;
     }
-    
+
     const msg = {
         userName,
-        message
+        message,
+        type: 0
     };
 
     // Send message to all peers.
-    webrtc.sendToAll('chat', msg);
+    webrtc.sendToAll('msg', msg);
     // Update our message list locally.
     messages.push(msg);
     updateChatMessages();
 };
-
+function send() {
+    var number = {
+        value: document.getElementById('num').value
+    }
+    var xhr = new window.XMLHttpRequest()
+    xhr.open('POST', '/num', true)
+    xhr.setRequestHeader('Content-Type', 'application/json;charset=UTF-8')
+    xhr.send(JSON.stringify(number))
+}
 // Display Chat Interface
 const showChatRoom = (room) => {
     // Hide room join form.
@@ -105,6 +118,27 @@ const updateChatMessages = () => {
     chatContentEl.animate({ scrollTop: scrollHeight }, 150);
 };
 
+function transmitSpeech(message) {
+    message = message.trim(); // Remove whitespace.
+
+    if (message.length == 0) {
+        return;
+    }
+
+    const msg = {
+        userName,
+        message,
+        type: 1
+    };
+
+    // Send message to all peers.
+    webrtc.sendToAll('msg', msg);
+    // Update our message list locally.
+    messages.push(msg);
+    updateChatMessages();
+
+}
+
 window.addEventListener('load', () => {
     // Add validation rules to Create/Join Room Form
     formEl.form({
@@ -116,6 +150,7 @@ window.addEventListener('load', () => {
 
     // We got access to local camera
     webrtc.on('localStream', () => {
+        beginSpeechRecognition();
         localImageEl.hide();
         localVideoEl.show();
     });
@@ -137,11 +172,9 @@ window.addEventListener('load', () => {
 
     // Receive message from remote user
     webrtc.connection.on('message', (data) => {
-        if (data.type === 'chat') {
-            const message = data.payload;
-            messages.push(message);
-            updateChatMessages();
-        }
+        const message = data.payload;
+        messages.push(message);
+        updateChatMessages();
     });
 
     // Remote video was added
