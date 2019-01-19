@@ -2,7 +2,6 @@ function beginSpeechRecognition() {
     console.log('began');
     window.SpeechRecognition = window.webkitSpeechRecognition || window.SpeechRecognition;
     const recognition = new window.SpeechRecognition();
-    recognition.lang = lang_HTML5;
     // recognition.interimResults=true;
     recognition.onresult = (event) => {
         const speechToText = event.results[0][0].transcript;
@@ -20,11 +19,13 @@ function beginSpeechRecognition() {
     function startRecognition(delay) {
         setTimeout(function () {
             try {
+                recognition.lang = languages[languageIndex].htmlLangCode;
                 recognition.start();
             } catch (e) {
                 startRecognition(delay);
             }
         }, delay)
     }
+    // Start recognition loop.
     recognition.start();
 }
