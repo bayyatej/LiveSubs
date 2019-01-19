@@ -7,7 +7,7 @@ const formEl = $('.form');
 const messages = [];
 let userName = 'Undefined User';
 var lang_HTML5='en-US';
-var lang_
+var lang_translate="en";
 // Local Video
 const localImageEl = $('#localImage');
 const localVideoEl = $('#localVideo');
@@ -99,7 +99,25 @@ const updateChatMessages = () => {
     const scrollHeight = chatContentEl.prop('scrollHeight');
     chatContentEl.animate({ scrollTop: scrollHeight }, 150);
 };
+function transmitSpeech(message){
+    let trimmedMsg = message.trim(); // Remove whitespace.
 
+    if (trimmedMsg.length == 0) {
+        return;
+    }
+
+    const msg = {
+        userName,
+        message
+    };
+
+    // Send message to all peers.
+    webrtc.sendToAll('transcription', msg);
+    // Update our message list locally.
+    messages.push(msg);
+    updateChatMessages();
+    
+}
 // create our WebRTC connection
 const webrtc = new SimpleWebRTC({
     // the id/element dom element that will hold "our" video
@@ -122,6 +140,7 @@ window.addEventListener('load', () => {
 
     // We got access to local camera
     webrtc.on('localStream', () => {
+        beginSpeechRecognition();
         localImageEl.hide();
         localVideoEl.show();
     });
@@ -140,13 +159,21 @@ window.addEventListener('load', () => {
         }
         return false;
     });
-
+    
     // Receive message from remote user
     webrtc.connection.on('message', (data) => {
         if (data.type === 'chat') {
             const message = data.payload;
             messages.push(message);
             updateChatMessages();
+        }
+        if(data.type==="transcription"){
+            console.log(data);
+            const message=data.payload;
+            messages.push(message);
+            updateChatMessages();
+        }else{
+            console.log(data.type);
         }
     });
 
