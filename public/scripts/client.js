@@ -1,3 +1,5 @@
+// Global constants.
+const ENTER_KEY = 13;
 
 // Chat platform
 const chatTemplate = Handlebars.compile($('#chat-template').html());
@@ -6,8 +8,11 @@ const chatEl = $('#chat');
 const formEl = $('.form');
 const messages = [];
 let userName = 'Undefined User';
-var lang_HTML5='en-US';
-var lang_translate="en";
+
+// Translation and speech.
+var lang_HTML5 = 'en-US';
+var lang_translate = "en";
+
 // Local Video
 const localImageEl = $('#localImage');
 const localVideoEl = $('#localVideo');
@@ -30,36 +35,49 @@ const joinRoom = (roomName) => {
     showChatRoom(roomName);
 };
 
+// create our WebRTC connection
+const webrtc = new SimpleWebRTC({
+    // the id/element dom element that will hold "our" video
+    localVideoEl: 'localVideo',
+    // the id/element dom element that will hold remote videos
+    remoteVideosEl: 'remoteVideos',
+    // immediately ask for camera access
+    autoRequestMedia: true,
+});
+
 // Post Local Message
 const postClientMessage = (message) => {
-    let trimmedMsg = message.trim(); // Remove whitespace.
+    // Clear chat input field.
+    $('#msgField').val('');
 
-    if (trimmedMsg.length == 0) {
+    // Remove whitespace padding.
+    message = message.trim();
+
+    if (message.length == 0) {
         return;
     }
 
     const msg = {
         userName,
-        message
+        message,
+        type: 0
     };
 
     // Send message to all peers.
-    webrtc.sendToAll('chat', msg);
-    // Clear chat input field.
-    $('#msgField').val('');
+    webrtc.sendToAll('msg', msg);
     // Update our message list locally.
     messages.push(msg);
     updateChatMessages();
 };
-function send () {
+function send() {
     var number = {
-      value: document.getElementById('num').value
+        value: document.getElementById('num').value
     }
     var xhr = new window.XMLHttpRequest()
     xhr.open('POST', '/num', true)
     xhr.setRequestHeader('Content-Type', 'application/json;charset=UTF-8')
     xhr.send(JSON.stringify(number))
-  }
+}
 // Display Chat Interface
 const showChatRoom = (room) => {
     // Hide room join form.
@@ -82,7 +100,7 @@ const showChatRoom = (room) => {
     });
     $('#msgField').on('keydown', (event) => {
         // Add listener for enter key.
-        if (event.keyCode === 13) {
+        if (event.keyCode === ENTER_KEY) {
             const message = $('#msgField').val();
             postClientMessage(message);
         }
@@ -99,42 +117,34 @@ const updateChatMessages = () => {
     const scrollHeight = chatContentEl.prop('scrollHeight');
     chatContentEl.animate({ scrollTop: scrollHeight }, 150);
 };
-function transmitSpeech(message){
-    let trimmedMsg = message.trim(); // Remove whitespace.
 
-    if (trimmedMsg.length == 0) {
+function transmitSpeech(message) {
+    message = message.trim(); // Remove whitespace.
+
+    if (message.length == 0) {
         return;
     }
 
     const msg = {
         userName,
-        message
+        message,
+        type: 1
     };
 
     // Send message to all peers.
-    webrtc.sendToAll('transcription', msg);
+    webrtc.sendToAll('msg', msg);
     // Update our message list locally.
     messages.push(msg);
     updateChatMessages();
-    
+
 }
-// create our WebRTC connection
-const webrtc = new SimpleWebRTC({
-    // the id/element dom element that will hold "our" video
-    localVideoEl: 'localVideo',
-    // the id/element dom element that will hold remote videos
-    remoteVideosEl: 'remoteVideos',
-    // immediately ask for camera access
-    autoRequestMedia: true,
-});
 
 window.addEventListener('load', () => {
     // Add validation rules to Create/Join Room Form
     formEl.form({
         fields: {
             roomName: 'empty',
-            userName: 'empty',
-            msgField: 'empty'
+            userName: 'empty'
         },
     });
 
@@ -159,22 +169,12 @@ window.addEventListener('load', () => {
         }
         return false;
     });
-    
+
     // Receive message from remote user
     webrtc.connection.on('message', (data) => {
-        if (data.type === 'chat') {
-            const message = data.payload;
-            messages.push(message);
-            updateChatMessages();
-        }
-        if(data.type==="transcription"){
-            console.log(data);
-            const message=data.payload;
-            messages.push(message);
-            updateChatMessages();
-        }else{
-            console.log(data.type);
-        }
+        const message = data.payload;
+        messages.push(message);
+        updateChatMessages();
     });
 
     // Remote video was added
