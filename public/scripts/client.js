@@ -8,8 +8,8 @@ const chatEl = $('#chat');
 const formEl = $('.form');
 const messages = [];
 let userName = 'Undefined User';
-var myUniqueId="";
-var idMap={};
+var myUniqueId = "";
+var idMap = {};
 // Translation and speech.
 var lang_HTML5 = 'en-US';
 var lang_translate = "en";
@@ -59,7 +59,8 @@ const showChatRoom = (room) => {
     const joinMsg = {
         name: '',
         text: 'Hello, ' + userName + '. Welcome to ' + room + '!',
-        type: 0
+        type: 0,
+        uniqueId: ''
     };
 
     messages.push(joinMsg);
@@ -93,7 +94,7 @@ const postClientMessage = (message) => {
     const msg = {
         name: userName,
         text: message,
-        type: 0,
+        type: 1,
         uniqueId: myUniqueId
     };
 
@@ -146,12 +147,14 @@ function transmitSpeech(message) {
     updateVideo(msg);
     updateChatMessages();
 }
-function updateVideo(msg){
-    if(msg.message.length<1){
+
+function updateVideo(message) {
+    if (message.text.length < 1) {
         return;
     }
-    console.log(msg);
+    console.log(message);
 }
+
 window.addEventListener('load', () => {
     Handlebars.registerHelper('equals', function (v1, v2, options) {
         if (v1 === v2) {
@@ -172,7 +175,8 @@ window.addEventListener('load', () => {
 
     // We got access to local camera
     webrtc.on('localStream', () => {
-        myUniqueId=webrtc.connection.socket.sessionid;
+        myUniqueId = webrtc.connection.connection.id;
+
         beginSpeechRecognition();
         localImageEl.hide();
         localVideoEl.show();
