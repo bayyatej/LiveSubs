@@ -9,6 +9,7 @@ const formEl = $('.form');
 const messages = [];
 let userName = 'Undefined User';
 var myUniqueId = "";
+var subtitle = document.getElementById('subtitle');
 // Translation and speech.
 // Translate -> Google Translate language code, HTML -> BCP-47.
 const languages = [
@@ -54,8 +55,10 @@ const showChatRoom = (room) => {
     // Hide room join form.
     formEl.hide();
     const html = chatTemplate({ room });
-    $('#chatSegment').addClass("right wide sidebar visible")
     chatEl.html(html);
+
+    $('#roomGrid').removeClass("center aligned page");
+    $('#chatSegment').removeClass("login").addClass("right wide sidebar visible");
 
     // Post message for joining user.
     const joinMsg = {
@@ -211,15 +214,20 @@ window.addEventListener('load', () => {
     // Receive message from remote user
     webrtc.connection.on('message', (data) => {
         if (data.type === 'msg') {
+            //translate data
             const message = data.payload;
             messages.push(message);
+            if (message.type==2){
+                subtitle.textContent=message.text;
+                console.log('updated');
+            }
+            //show this user
             updateChatMessages();
         }
     });
 
     // Remote video was added
     webrtc.on('videoAdded', (video, peer) => {
-        console.log(peer);
         const id = webrtc.getDomId(peer);
         const html = remoteVideoTemplate({ id });
         if (remoteVideosCount === 0) {

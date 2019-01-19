@@ -29,10 +29,10 @@
         <div id="spotlight" class="big-video"></div>
         <div id="remoteVideos" class="videobar">
         </div>
-
-        <div class="ui two column stackable grid">
+        <div class="floating-sub" ><span id="subtitle"></span></div>
+        <div class="ui two column stackable center aligned page grid" id = "roomGrid">
             <div class="ui ten wide column">
-                <div id="chatSegment" class="ui segment">
+                <div id="chatSegment" class="ui segment login">
                     <!-- Join Room Form -->
                     <div class="ui form">
                         <label>Display Name</label>
@@ -54,7 +54,6 @@
                 </div>
             </div>
             <!-- End of Chat Section -->
-
             <video id="localVideo" class="userCamera hidden" autoplay></video>
         </div>
     </div>
