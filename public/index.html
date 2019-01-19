@@ -14,6 +14,16 @@
 <body>
     <!-- Main Content -->
     <div class="ui container">
+        <div id="langDropdown" class="ui selection dropdown">
+            <input type="hidden" name="gender">
+            <i class="dropdown icon"></i>
+            <div class="default text"></div>
+            <div class="menu">
+                <div class="item" data-value="0">English</div>
+                <div class="item" data-value="1">French</div>
+                <div class="item" data-value="2">Chinese (Simplified)</div>
+            </div>
+        </div>
 
         <!-- Remote Camera -->
         <div id="spotlight" class="big-video"></div>
@@ -45,8 +55,7 @@
             </div>
             <!-- End of Chat Section -->
 
-            <img id="localImage" class="userCamera ui image" src="images/image.png">
-            <video id="localVideo" class="userCamera hidden"  autoplay></video>
+            <video id="localVideo" class="userCamera hidden" autoplay></video>
         </div>
     </div>
 

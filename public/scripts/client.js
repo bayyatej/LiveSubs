@@ -11,14 +11,16 @@ let userName = 'Undefined User';
 var myUniqueId = "";
 var idMap = {};
 // Translation and speech.
-var lang_HTML5 = 'en-US';
-var lang_translate = "en";
-const languages = {
-    "English": { translate: "en", "html": "en-US" },
-    "French": { translate: "fr", "html": "fr-FR" }
-}
+// Translate -> Google Translate language code, HTML -> BCP-47.
+const languages = [
+    { displayName: "English", translateLangCode: "en", htmlLangCode: "en-US" },
+    { displayName: "French", translateLangCode: "fr", htmlLangCode: "fr-FR" },
+    { displayName: "Chinese (Simplified)", translateLangCode: "zh-CN", htmlLangCode: "zh-CN" }
+];
+
+var languageIndex = 0; // Default to English.
+
 // Local Video
-const localImageEl = $('#localImage');
 const localVideoEl = $('#localVideo');
 
 // Remote Videos
@@ -158,6 +160,15 @@ function updateVideo(message) {
 }
 
 window.addEventListener('load', () => {
+    // Setup language dropdown.
+    $('#langDropdown').dropdown('set selected', 'English');
+
+    $('#langDropdown').change(function() {
+        // Update language index.
+        languageIndex = $('#langDropdown').dropdown('get value');
+    });
+
+    // Set a new helper function for comparison in Handlebars.
     Handlebars.registerHelper('equals', function (v1, v2, options) {
         if (v1 === v2) {
             return options.fn(this);
@@ -180,7 +191,6 @@ window.addEventListener('load', () => {
         myUniqueId = webrtc.connection.connection.id;
 
         beginSpeechRecognition();
-        localImageEl.hide();
         localVideoEl.show();
     });
 
