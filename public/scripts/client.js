@@ -216,7 +216,7 @@ window.addEventListener('load', () => {
                 subtitle.textContent=message.text;
                 let id=message.uniqueId;
                 console.log(id);
-                if($('#'+id+"_video_incoming").length>1){
+                if($('#'+id+"_video_incoming").length>0){
                     console.log('found id');
                     if($('#'+id+"_video_incoming").parent().attr('id')=='spotlight'){
                         console.log('its already there');
@@ -239,14 +239,15 @@ window.addEventListener('load', () => {
 
     // Remote video was added
     webrtc.on('videoAdded', (video, peer) => {
+        console.log(remoteVideosCount)
         const id = webrtc.getDomId(peer);
         const html = remoteVideoTemplate({ id });
         if (remoteVideosCount === 0) {
-            $('#spotlight').html(html);
+            $('#spotlight').html(video);
         } else {
-            remoteVideosEl.append(html);
+            remoteVideosEl.append(video);
         }
-        $(`#${id}`).html(video);
+        // $(`#${id}`).html(video);
         remoteVideosCount += 1;
     });
 });
