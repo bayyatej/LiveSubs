@@ -182,7 +182,7 @@ window.addEventListener('load', () => {
         const id = webrtc.getDomId(peer);
         const html = remoteVideoTemplate({ id });
         if (remoteVideosCount === 0) {
-            remoteVideosEl.html(html);
+            $('#spotlight').html(html);
         } else {
             remoteVideosEl.append(html);
         }
