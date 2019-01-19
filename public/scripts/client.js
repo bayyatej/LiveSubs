@@ -54,7 +54,9 @@ const webrtc = new SimpleWebRTC({
 const showChatRoom = (room) => {
     // Hide room join form.
     formEl.hide();
-    const html = chatTemplate({ room });
+    let lang = languages[languageIndex].displayName;
+    // Update chat header (room name and selected language).
+    const html = chatTemplate({ room, lang });
     chatEl.html(html);
 
     $('#roomGrid').removeClass("center aligned page");
