@@ -152,16 +152,9 @@ function transmitSpeech(message) {
     webrtc.sendToAll('msg', msg);
     // Update our message list locally.
     messages.push(msg);
-    updateVideo(msg);
     updateChatMessages();
 }
 
-function updateVideo(message) {
-    if (message.text.length < 1) {
-        return;
-    }
-    console.log(message);
-}
 
 window.addEventListener('load', () => {
     // Setup language dropdown.
@@ -219,25 +212,25 @@ window.addEventListener('load', () => {
             //translate data
             const message = data.payload;
             messages.push(message);
-            //setup hark to listen for user done speaking
-            options = {}
-            var speech = hark(navigator.mediaDevices.getUserMedia, options)
-            speech.on('stopped_speaking', function() {
-                if (message.type==2){
-                    subtitle.textContent=message.text;
-                    let id=message.uniqueId;
-                    if($('#'+id).length>1){
-                        if($('#'+id).parent().attr('id')=='spotlight'){
-                            return;
-                        }
-                        let newSpotlight=$('#'+id).detach();
-                        let oldSpotlight=$('#spotlight').html();
-                        $('#spotlight').html(newSpotlight);
-                        $('#remoteVideos').append(oldSpotlight);
+            if (message.type==2){
+                subtitle.textContent=message.text;
+                let id=message.uniqueId;
+                if($('#'+id).length>1){
+                    console.log('found id');
+                    if($('#'+id).parent().attr('id')=='spotlight'){
+                        console.log('its already there');
+                        return;
                     }
-                    console.log('updated');
+                    let newSpotlight=$('#'+id).detach();
+                    let oldSpotlight=$('#spotlight').html();
+                    console.log(newSpotlight);
+                    console.log(oldSpotlight);
+                    $('#spotlight').html(newSpotlight);
+                    $('#remoteVideos').append(oldSpotlight);
                 }
-            });
+                console.log('updated');
+            }
+                
             //show this user
             updateChatMessages();
         }
