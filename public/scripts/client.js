@@ -45,40 +45,6 @@ const webrtc = new SimpleWebRTC({
     autoRequestMedia: true,
 });
 
-// Post Local Message
-const postClientMessage = (message) => {
-    // Clear chat input field.
-    $('#msgField').val('');
-
-    // Remove whitespace padding.
-    message = message.trim();
-
-    if (message.length == 0) {
-        return;
-    }
-
-    const msg = {
-        userName,
-        message,
-        type: 0
-    };
-
-    // Send message to all peers.
-    webrtc.sendToAll('msg', msg);
-    // Update our message list locally.
-    messages.push(msg);
-    updateChatMessages();
-};
-function send() {
-    var number = {
-        value: document.getElementById('num').value
-    }
-    var xhr = new window.XMLHttpRequest()
-    xhr.open('POST', '/num', true)
-    xhr.setRequestHeader('Content-Type', 'application/json;charset=UTF-8')
-    xhr.send(JSON.stringify(number))
-}
-// Display Chat Interface
 const showChatRoom = (room) => {
     // Hide room join form.
     formEl.hide();
@@ -87,8 +53,9 @@ const showChatRoom = (room) => {
 
     // Post message for joining user.
     const joinMsg = {
-        userName: 'Room',
-        message: 'Hello, ' + userName + '. Welcome to ' + room + '!'
+        name: '',
+        text: 'Hello, ' + userName + '. Welcome to ' + room + '!',
+        type: 0
     };
 
     messages.push(joinMsg);
@@ -106,6 +73,41 @@ const showChatRoom = (room) => {
         }
     });
 };
+
+// Post Local Message
+const postClientMessage = (message) => {
+    // Clear chat input field.
+    $('#msgField').val('');
+
+    // Remove whitespace padding.
+    message = message.trim();
+
+    if (message.length == 0) {
+        return;
+    }
+
+    const msg = {
+        name: userName,
+        text: message,
+        type: 1
+    };
+
+    // Send message to all peers.
+    webrtc.sendToAll('msg', msg);
+    // Update our message list locally.
+    messages.push(msg);
+    updateChatMessages();
+};
+
+function send() {
+    var number = {
+        value: document.getElementById('num').value
+    }
+    var xhr = new window.XMLHttpRequest()
+    xhr.open('POST', '/num', true)
+    xhr.setRequestHeader('Content-Type', 'application/json;charset=UTF-8')
+    xhr.send(JSON.stringify(number))
+}
 
 // Update Chat Messages
 const updateChatMessages = () => {
@@ -126,9 +128,9 @@ function transmitSpeech(message) {
     }
 
     const msg = {
-        userName,
-        message,
-        type: 1
+        name: userName,
+        text: message,
+        type: 2
     };
 
     // Send message to all peers.
@@ -136,10 +138,18 @@ function transmitSpeech(message) {
     // Update our message list locally.
     messages.push(msg);
     updateChatMessages();
-
 }
 
 window.addEventListener('load', () => {
+    Handlebars.registerHelper('equals', function (v1, v2, options) {
+        if (v1 === v2) {
+            return options.fn(this);
+        }
+        else {
+            return options.inverse(this);
+        }
+    });
+
     // Add validation rules to Create/Join Room Form
     formEl.form({
         fields: {
@@ -172,9 +182,11 @@ window.addEventListener('load', () => {
 
     // Receive message from remote user
     webrtc.connection.on('message', (data) => {
-        const message = data.payload;
-        messages.push(message);
-        updateChatMessages();
+        if (data.type === 'msg') {
+            const message = data.payload;
+            messages.push(message);
+            updateChatMessages();
+        }
     });
 
     // Remote video was added
