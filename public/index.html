@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="scripts/semantic-ui-css/semantic.min.css">
+    <title>LiveSub | Real-time Video Chat Translation</title>
+    <style>
+        html {
+            margin-top: 20px;
+        }
+
+        #chat-content {
+            height: 180px;
+            overflow-y: scroll;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Main Content -->
+    <div class="ui container">
+        <div class="ui two column stackable grid">
+            <div class="ui ten wide column">
+                <div class="ui segment">
+                    <!-- Join Room Form -->
+                    <div class="ui form">
+                        <label>Display Name</label>
+                        <div class="field">
+                            <input type="text" id="userName" name="userName">
+                        </div>
+                        <label>Room ID</label>
+                        <div class="field">
+                            <input type="text" id="roomID" name="roomID">
+                        </div>
+                        <div class="ui buttons">
+                            <div id="createBtn" class="ui submit red button">Create Room</div>
+                            <div id="joinBtn" class="ui submit green button">Join Room</div>
+                        </div>
+                    </div>
+
+                    <!-- Chat List -->
+                    <div id="chat"></div>
+                </div>
+            </div>
+            <!-- End of Chat Section -->
+
+            <!-- Local Camera View -->
+            <div class="ui six wide column">
+                <img id="localImage" class="ui image" style="width:250px;" src="images/image.png">
+                <video id="localVideo" class="ui image hidden" style="width:250px;" autoplay></video>
+            </div>
+
+        </div>
+
+        <!-- Remote Cameras -->
+        <img class="ui centered medium image" src="images/image.png">
+    </div>
+
+    <!-- Chat Template -->
+    <script id="chat-template" type="text/x-handlebars-template">
+        <h3 class="ui blue header"><strong>{{ room }}</strong></h3>
+        <hr>
+        <div id="chatList" class="ui feed" style="height:100px;"> </div>
+
+        <div class="ui form">
+            <div class="ui field">
+                <textarea id="msgField" name="msgField" rows="1"></textarea>
+                <br>
+                <div id="submitMsgBtn" class="ui primary submit button">Send</div>
+            </div>
+        </div>
+    </script>
+
+    <!-- Chat Content Template -->
+    <script id="chat-content-template" type="text/x-handlebars-template">
+        {{#each messages}}
+        <div class="event">
+            <div class="content">
+                <div style="display: inline;color:#769ac9"> {{ userName }}</div>: {{ message }}
+            </div>
+        </div>
+        {{/each}}
+    </script>
+
+    <!-- Remote Video Template -->
+    <script id="remote-video-template" type="text/x-handlebars-template">
+        <div id="{{ id }}" class="four wide column"></div>
+    </script>
+
+    <!-- Scripts -->
+    <script src="scripts/jquery/dist/jquery.min.js"></script>
+    <script src="scripts/semantic-ui-css/semantic.min.js"></script>
+    <script src="scripts/handlebars/dist/handlebars.min.js "></script>
+    <script src="scripts/simplewebrtc/out/simplewebrtc-with-adapter.bundle.js"></script>
+    <script src="scripts/client.js"></script>
+</body>
+
+</html>
