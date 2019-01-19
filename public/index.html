@@ -11,17 +11,17 @@
         html {
             margin-top: 20px;
         }
-
-        #chat-content {
-            height: 180px;
-            overflow-y: scroll;
-        }
     </style>
 </head>
 
 <body>
     <!-- Main Content -->
     <div class="ui container">
+
+        <!-- Remote Camera -->
+        <div id="remoteVideos">
+        </div>
+
         <div class="ui two column stackable grid">
             <div class="ui ten wide column">
                 <div class="ui segment">
@@ -29,11 +29,11 @@
                     <div class="ui form">
                         <label>Display Name</label>
                         <div class="field">
-                            <input type="text" id="userName" name="userName">
+                            <input type="text" id="userName" name="userName" data-lpignore="true">
                         </div>
-                        <label>Room ID</label>
+                        <label>Room Name</label>
                         <div class="field">
-                            <input type="text" id="roomID" name="roomID">
+                            <input type="text" id="roomName" name="roomName" data-lpignore="true">
                         </div>
                         <div class="ui buttons">
                             <div id="createBtn" class="ui submit red button">Create Room</div>
@@ -54,24 +54,21 @@
             </div>
 
         </div>
-
-        <!-- Remote Cameras -->
-        <img class="ui centered medium image" src="images/image.png">
     </div>
 
     <!-- Chat Template -->
     <script id="chat-template" type="text/x-handlebars-template">
         <h3 class="ui blue header"><strong>{{ room }}</strong></h3>
         <hr>
-        <div id="chatList" class="ui feed" style="height:100px;"> </div>
+        <div id="chatList" class="ui feed" style="height:100px;overflow-y:scroll;"> </div>
 
         <div class="ui form">
-            <div class="ui field">
-                <textarea id="msgField" name="msgField" rows="1"></textarea>
-                <br>
-                <div id="submitMsgBtn" class="ui primary submit button">Send</div>
+            <div class="ui field grid">
+                <input type="text" id="msgField" name="msgField" data-lpignore="true" class="thirteen wide column">
+                <div id="submitMsgBtn" class="ui primary submit button two wide column" style="margin-left:5px;">Send</div>
             </div>
         </div>
+
     </script>
 
     <!-- Chat Content Template -->
@@ -87,7 +84,7 @@
 
     <!-- Remote Video Template -->
     <script id="remote-video-template" type="text/x-handlebars-template">
-        <div id="{{ id }}" class="four wide column"></div>
+        <div id="{{ id }}" class="sixteen wide column"></div>
     </script>
 
     <!-- Scripts -->

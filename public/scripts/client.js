@@ -18,20 +18,26 @@ const remoteVideosEl = $('#remoteVideos');
 let remoteVideosCount = 0;
 
 // Register new Chat Room
-const createRoom = (roomID) => {
-    webrtc.createRoom(roomID, (err, name) => {
+const createRoom = (roomName) => {
+    webrtc.createRoom(roomName, (err, name) => {
         showChatRoom(name);
     });
 };
 
 // Join existing Chat Room
-const joinRoom = (roomID) => {
-    webrtc.joinRoom(roomID);
-    showChatRoom(roomID);
+const joinRoom = (roomName) => {
+    webrtc.joinRoom(roomName);
+    showChatRoom(roomName);
 };
 
 // Post Local Message
 const postClientMessage = (message) => {
+    let trimmedMsg = message.trim(); // Remove whitespace.
+
+    if (trimmedMsg.length == 0) {
+        return;
+    }
+
     const msg = {
         userName,
         message
@@ -60,12 +66,6 @@ const showChatRoom = (room) => {
     formEl.hide();
     const html = chatTemplate({ room });
     chatEl.html(html);
-    const postForm = $('form');
-
-    // Post Message Validation Rules
-    postForm.form({
-        message: 'empty',
-    });
 
     // Post message for joining user.
     const joinMsg = {
@@ -114,8 +114,9 @@ window.addEventListener('load', () => {
     // Add validation rules to Create/Join Room Form
     formEl.form({
         fields: {
-            roomID: 'empty',
+            roomName: 'empty',
             userName: 'empty',
+            msgField: 'empty'
         },
     });
 
@@ -130,12 +131,12 @@ window.addEventListener('load', () => {
             return false;
         }
         userName = $('#userName').val();
-        const roomID = $('#roomID').val();
+        const roomName = $('#roomName').val();
         if (event.target.id === 'createBtn') {
-            createRoom(roomID);
+            createRoom(roomName);
         }
         else {
-            joinRoom(roomID);
+            joinRoom(roomName);
         }
         return false;
     });

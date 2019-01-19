@@ -6,6 +6,7 @@ This was created during the 36-hour hackathon, SpartaHacks V.
 # Libraries Used
 - Node.js
 - SimpleWebRTC
+- Semantic UI
 
 # Services Used
 - Google Cloud App Engine
