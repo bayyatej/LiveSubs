@@ -220,11 +220,14 @@ window.addEventListener('load', () => {
             if (message.type==2){
                 subtitle.textContent=message.text;
                 let id=message.uniqueId;
-                if($('#'+id).length>1){
-                    if($('#'+id).parent().attr('id')=='spotlight'){
+                console.log(id);
+                if($('#'+id+"_video_incoming").length>1){
+                    console.log('oh1')
+                    if($('#'+id+"_video_incoming").parent().attr('id')=='spotlight'){
+                        console.log('its already there');
                         return;
                     }
-                    let newSpotlight=$('#'+id).detach();
+                    let newSpotlight=$('#'+id+"_video_incoming").detach();
                     let oldSpotlight=$('#spotlight').html();
                     $('#spotlight').html(newSpotlight);
                     $('#remoteVideos').append(oldSpotlight);
