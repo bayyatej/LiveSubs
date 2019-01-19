@@ -24,7 +24,6 @@ var languageIndex = 0; // Default to English.
 const localVideoEl = $('#localVideo');
 
 // Remote Videos
-const remoteVideoTemplate = Handlebars.compile($('#remote-video-template').html());
 const remoteVideosEl = $('#remoteVideos');
 let remoteVideosCount = 0;
 
@@ -241,7 +240,6 @@ window.addEventListener('load', () => {
     webrtc.on('videoAdded', (video, peer) => {
         console.log(remoteVideosCount)
         const id = webrtc.getDomId(peer);
-        const html = remoteVideoTemplate({ id });
         if (remoteVideosCount === 0) {
             $('#spotlight').html(video);
         } else {
