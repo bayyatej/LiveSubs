@@ -152,16 +152,9 @@ function transmitSpeech(message) {
     webrtc.sendToAll('msg', msg);
     // Update our message list locally.
     messages.push(msg);
-    updateVideo(msg);
     updateChatMessages();
 }
 
-function updateVideo(message) {
-    if (message.text.length < 1) {
-        return;
-    }
-    console.log(message);
-}
 
 window.addEventListener('load', () => {
     // Setup language dropdown.
@@ -219,6 +212,7 @@ window.addEventListener('load', () => {
             //translate data
             const message = data.payload;
             messages.push(message);
+<<<<<<< HEAD
             //setup hark to listen for user done speaking
             options = {}
             var speech = hark(navigator.mediaDevices.getUserMedia(), options)
@@ -234,10 +228,28 @@ window.addEventListener('load', () => {
                         let oldSpotlight=$('#spotlight').html();
                         $('#spotlight').html(newSpotlight);
                         $('#remoteVideos').append(oldSpotlight);
+=======
+            if (message.type==2){
+                subtitle.textContent=message.text;
+                let id=message.uniqueId;
+                console.log(id);
+                if($('#'+id+"_video_incoming").length>1){
+                    console.log('found id');
+                    if($('#'+id+"_video_incoming").parent().attr('id')=='spotlight'){
+                        console.log('its already there');
+                        return;
+>>>>>>> 63e6dacecc183e02ea5bf889beef95c0efef628d
                     }
-                    console.log('updated');
+                    let newSpotlight=$('#'+id+"_video_incoming").detach();
+                    let oldSpotlight=$('#spotlight').html();
+                    console.log(newSpotlight);
+                    console.log(oldSpotlight);
+                    $('#spotlight').html(newSpotlight);
+                    $('#remoteVideos').append(oldSpotlight);
                 }
-            });
+                console.log('updated');
+            }
+                
             //show this user
             updateChatMessages();
         }

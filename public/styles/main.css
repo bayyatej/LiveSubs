@@ -27,11 +27,15 @@ body {
 }
 .floating-sub{
     color:white;
-    outline-color: black;
-    z-index: 999!important;
+    text-shadow: -1px -1px 0 #000,  
+                1px -1px 0 #000,
+                -1px 1px 0 #000,
+                1px 1px 0 #000;
+    z-index: 5!important;
     top: 10vh;
-    font-size: 4rem;
-    text-align:center;
+    font-size: 2rem;
+    text-align: center;
+    line-height: 1.2rem;
 }
 .login {
     position: relative;
