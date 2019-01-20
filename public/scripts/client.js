@@ -190,6 +190,7 @@ function capitalizeSentence(sentence) {
 
     return sentence; // Already capitalized.
 }
+var connection = new WebSocket('ws://localhost:40510');
 
 // Update Chat Messages
 const updateChatMessages = () => {
@@ -204,6 +205,13 @@ const updateChatMessages = () => {
 
 window.addEventListener('load', () => {
     // Setup language dropdown.
+    //request api key
+    var apiKey="";
+    connection.send('key');
+    connection.onmessage = function (data) {
+        apiKey=data.data;
+    
+    }
     $('#langDropdown').dropdown('set selected', 'English');
 
     $('#langDropdown').change(function () {
@@ -232,7 +240,6 @@ window.addEventListener('load', () => {
     // We got access to local camera
     webrtc.on('localStream', (stream) => {
         myUniqueId = webrtc.connection.connection.id;
-        console.log('avout to recognize speech');
         beginSpeechRecognition();
         localVideoEl.show();
         var speechEvents = hark(stream, {});
@@ -265,15 +272,17 @@ window.addEventListener('load', () => {
 
     // Receive message from remote user
     webrtc.connection.on('message', (data) => {
+
         if (data.type === 'msg') {
             // Received message data from room, chat messages, transcriptions, etc.
+            console.log([data, languages[languageIndex]['translateLangCode']]);
             let message = data.payload;
             let maxSubChars = languages[languageIndex].maxSubtitleChars;
 
             // Translate the message!
-            /*
+
             var requestURL = "https://translate.googleapis.com/translate_a/single?client=gtx&sl=auto&tl=" +
-                languages[languageIndex].translateLangCode + "&dt=t&q=" + encodeURI(message.text);
+                languages[languageIndex].translateLangCode + "&dt=t&q=" + encodeURI(message.text) + "&key="+apiKey;//AIzaSyBsGGlwPghAxSwIhaRANfXBbV65fq2OMWM";
             var request = new XMLHttpRequest();
             request.open('GET', requestURL);
             request.responseType = 'text';
@@ -284,49 +293,52 @@ window.addEventListener('load', () => {
             request.onload = function () {
                 let resp = JSON.parse('{"data":' + request.response + '}');
                 console.log(resp);
-                message.text = resp.data[0][0][0];*/
-            messages.push(message);
+                message.text = resp.data[0][0][0];
+                messages.push(message);
 
-            if (message.type == 2) {
-                // Received transcription data.
+                if (message.type == 2) {
+                    // Received transcription data.
 
-                let id = message.uniqueId;
-                // console.log(id);
-                if ($('#' + id + "_video_incoming").length > 0) {
-                    if ($('#' + id + "_video_incoming").parent().attr('id') == 'spotlight') {
-                        let fullText = subtitle.textContent;
+                    let id = message.uniqueId;
+                    // console.log(id);
+                    if ($('#' + id + "_video_incoming").length > 0) {
+                        if ($('#' + id + "_video_incoming").parent().attr('id') == 'spotlight') {
+                            let fullText = subtitle.textContent;
 
-                        if (fullText.length > 0) {
-                            // Prepend a space if there is something already.
-                            fullText += ' ';
+                            if (fullText.length > 0) {
+                                // Prepend a space if there is something already.
+                                fullText += ' ';
+                            }
+
+                            // Append the new sentence and period.
+                            fullText += message.text + '.';
+
+                            if (fullText.length > maxSubChars) {
+                                // Prepend ellipsis when previous sentences are cut off.
+                                fullText = '...' + fullText.substr(fullText.length - maxSubChars, fullText.length);
+                            }
+
+                            setSubtitleText(fullText);
+                            updateChatMessages();
+                            // console.log('spotlight still speaking...');
+                            return;
                         }
 
-                        // Append the new sentence and period.
-                        fullText += message.text + '.';
-
-                        if (fullText.length > maxSubChars) {
-                            // Prepend ellipsis when previous sentences are cut off.
-                            fullText = '...' + fullText.substr(fullText.length - maxSubChars, fullText.length);
-                        }
-
-                        setSubtitleText(fullText);
-                        updateChatMessages();
-                        // console.log('spotlight still speaking...');
-                        return;
+                        // Move spotlight to user who just spoke
+                        setSubtitleText(message.text); // Reset subtitle.
+                        gracePeriod = true;
+                        setTimeout(function () {
+                            gracePeriod = false;
+                        }, 1000)
                     }
-
-                    // Move spotlight to user who just spoke
-                    setSubtitleText(message.text); // Reset subtitle.
-                    gracePeriod = true;
-                    setTimeout(function () {
-                        gracePeriod = false;
-                    }, 1000)
                 }
+
+                updateChatMessages();
+                // connection.send(JSON.stringify({ "data": data, "lang": languages[languageIndex]['translateLangCode'] }));
+
             }
 
-            updateChatMessages();
-        }
-        else if (data.type === "hark") {
+        } else if (data.type === "hark") {
             let message = data.payload;
             console.log("got hark " + message.uniqueId);
             let id = message.uniqueId;
@@ -342,28 +354,28 @@ window.addEventListener('load', () => {
 
             }
         }
-    });
-    function setSpotlight(userId) {
-        let newSpotlight = $('#' + userId + "_video_incoming").detach();
-        let oldSpotlight = $('#spotlight').children("video").detach();
-        //console.log(newSpotlight);
-        //console.log(oldSpotlight);
+        function setSpotlight(userId) {
+            let newSpotlight = $('#' + userId + "_video_incoming").detach();
+            let oldSpotlight = $('#spotlight').children("video").detach();
+            //console.log(newSpotlight);
+            //console.log(oldSpotlight);
 
-        // Swap places with spotlight and small video.
-        $('#spotlight').prepend(newSpotlight);
-        $('#remoteVideos').append(oldSpotlight);
-    }
-    // Remote video was added
-    webrtc.on('videoAdded', (video, peer) => {
-        // console.log(remoteVideosCount + " videos, now adding", video);
-        const id = webrtc.getDomId(peer);
-        if (remoteVideosCount === 0) {
-            $('#spotlight').prepend(video);
+            // Swap places with spotlight and small video.
+            $('#spotlight').prepend(newSpotlight);
+            $('#remoteVideos').append(oldSpotlight);
         }
-        else {
-            remoteVideosEl.append(video);
-        }
-        // $(`#${id}`).html(video);
-        remoteVideosCount += 1;
-    });
-});
+        // Remote video was added
+        webrtc.on('videoAdded', (video, peer) => {
+            // console.log(remoteVideosCount + " videos, now adding", video);
+            const id = webrtc.getDomId(peer);
+            if (remoteVideosCount === 0) {
+                $('#spotlight').prepend(video);
+            }
+            else {
+                remoteVideosEl.append(video);
+            }
+            // $(`#${id}`).html(video);
+            remoteVideosCount += 1;
+        });
+    })
+})
