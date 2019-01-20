@@ -8,7 +8,25 @@ app.all('/', function (req, res, next) {
     res.header("Access-Control-Allow-Headers", "X-Requested-With");
     next();
 });
+var WebSocketServer = require('ws').Server,
+  wss = new WebSocketServer({port: 40510})
+wss.on('connection', function (ws) {
+  ws.on('message', function (message) {
+      //TODO: Send to cloud speech api and send back to client
+    console.log(JSON.parse(message).connected[2]);
+  })
+//   setInterval(
+//     () => ws.send(`${new Date()}`),
+//     1000
+//   )
+  //PSEUDOCODE
+  /*ws.on('message',function(){
+      //send to cloud speech api
+      send to translate api?maybe
+      on result: ws.send(detectedspeech)
 
+  })*/
+})
 // Set 'public' folder as root
 app.use(express.static('public'));
 // Provide access to node_modules folder from the client-side
