@@ -152,7 +152,7 @@ const createRoom = (roomName) => {
         showChatRoom(name);
     });
 };
-
+$('video').on('ended',function(){ $(this).remove(); });
 // Join existing Chat Room
 const joinRoom = (roomName) => {
     webrtc.joinRoom(roomName);
