@@ -4,6 +4,7 @@ const fs = require('fs');
 const websocketStream = require('websocket-stream/stream');
 const app = express();
 const port = 8080;
+const intoStream = require('into-stream');
 
 //google cloud speech to text API setup
 const api_key = 'AIzaSyAmHUszpQhr4bik5IFMBddONoarqsggB8c';
@@ -14,9 +15,9 @@ const speech = require('@google-cloud/speech');
 // Creates a client
 const client = new speech.SpeechClient();
 
-const encoding = 'Encoding of the audio file, e.g. LINEAR16';
-const sampleRateHertz = 16000;
-const languageCode = 'BCP-47 language code, e.g. en-US';
+const encoding = 'LINEAR16';
+const sampleRateHertz = 48000;
+const languageCode = 'en-US';
 
 
 const request = {
@@ -25,19 +26,25 @@ const request = {
       sampleRateHertz: sampleRateHertz,
       languageCode: languageCode,
     },
-    interimResults: false, // If you want interim results, set this to true
+    interimResults: true, // If you want interim results, set this to true
+    single_utterance: true,
   };
 
 // Create a recognize stream
 const recognizeStream = client
   .streamingRecognize(request)
-  .on('error', console.error)
-  .on('data', data =>
+  .on('error', function(e){
+      console.log(e);
+  })
+  .on('data', function(data){
     process.stdout.write(
-      data.results[0] && data.results[0].alternatives[0]
-        ? `Transcription: ${data.results[0].alternatives[0].transcript}\n`
-        : `\n\nReached transcription time limit, press Ctrl+C\n`
-    )
+        data.results[0] && data.results[0].alternatives[0]
+          ? `Transcription: ${data.results[0].alternatives[0].transcript}\n`
+          : `\n\nReached transcription time limit, press Ctrl+C\n`
+      );
+    console.log(data);
+  } 
+    
   );
 
 
@@ -52,14 +59,13 @@ var WebSocketServer = require('ws').Server,
 wss.on('connection', function (ws) {
     console.log("connected")
   ws.on('message', function (message) {
+    console.log(message)
     console.log("message recieved by server")
-    const stream = websocketStream(ws, {
-        // websocket-stream options here
-        binary: true,
-    });
+    //turn into readable stream
+    const stream = message
 
     console.log('stream found');
-    // recognizeStream.process(message);
+    intoStream('stream').pipe(recognizeStream);
   })
   //PSEUDOCODE
   /*ws.on('message',function(){

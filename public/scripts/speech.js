@@ -8,11 +8,11 @@ function beginSpeechRecognition(AVStream) {
     //     ws.send(JSON.stringify({'connected':[1,2,3,4],'isfake':true}))
     // }
     // event emmited when receiving message
-    console.log(AVStream.getAudioTracks())
+    console.log(AVStream)
     connection.onopen = function(event)
     {
         console.log('sending stream to server')
-        connection.send(AVStream.getAudioTracks());
+        connection.send(AVStream);
     }
     connection.onmessage = function (message)
     {
