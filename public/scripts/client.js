@@ -463,7 +463,8 @@ window.addEventListener('load', () => {
         webrtc.on('videoAdded', (video, peer) => {
             
             const id = webrtc.getDomId(peer);
-            if (remoteVideosCount === 0) {
+            // console.log($('#spotlight video').length);
+            if ($('#spotlight video').length<1) {
                 $('#spotlight').prepend(video);
             }
             else {
