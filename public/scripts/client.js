@@ -7,6 +7,7 @@ const chatContentTemplate = Handlebars.compile($('#chat-content-template').html(
 const chatEl = $('#chat');
 const formEl = $('.form');
 const messages = [];
+const MAX_SUBTITLE_LENGTH = 90;//max subtitle length to append (chars)
 var userName = 'Undefined User';
 var inRoom = false;
 var myUniqueId = "";
@@ -232,32 +233,52 @@ window.addEventListener('load', () => {
     webrtc.connection.on('message', (data) => {
         if (data.type === 'msg') {
             // Received message data from room, chat messages, transcriptions, etc.
-            const message = data.payload;
-            messages.push(message);
+            let message = data.payload;
+            var requestURL = "https://translate.googleapis.com/translate_a/single?client=gtx&sl=auto&tl=" +
+                languages[languageIndex].translateLangCode + "&dt=t&q=" + encodeURI(message.text);
+            var request = new XMLHttpRequest();
+            request.open('GET', requestURL);
+            request.responseType = 'text';
+            request.send();
+            console.log(requestURL);
+            request.onload = function () {
+                let resp=JSON.parse('{"data":'+request.response+'}');
+                console.log(resp);
+                message.text = resp.data[0][0][0];
+                messages.push(message);
+                //process the message.
+                if (message.type == 2) {
+                    // Received transcription data.
 
-            if (message.type == 2) {
-                // Received transcription data.
-                subtitle.textContent = message.text;
-                let id = message.uniqueId;
-                console.log(id);
-                if ($('#' + id + "_video_incoming").length > 0) {
-                    console.log('found id');
-                    if ($('#' + id + "_video_incoming").parent().attr('id') == 'spotlight') {
-                        console.log('its already there');
-                        return;
+                    let id = message.uniqueId;
+                    console.log(id);
+                    if ($('#' + id + "_video_incoming").length > 0) {
+                        console.log('found id');
+                        if ($('#' + id + "_video_incoming").parent().attr('id') == 'spotlight') {
+                            console.log('its already there');
+                            let fullText = subtitle.textContent + message.text;
+                            if (fullText.length > MAX_SUBTITLE_LENGTH) {
+                                fullText = '..'+fullText.substr(fullText.length - MAX_SUBTITLE_LENGTH, fullText.length);
+                            }
+                            subtitle.textContent =fullText;
+                            updateChatMessages();
+                            return;
+                        }
+                        subtitle.textContent = message.text;
+                        let newSpotlight = $('#' + id + "_video_incoming").detach();
+                        let oldSpotlight = $('#spotlight').children().detach();
+                        console.log(newSpotlight);
+                        console.log(oldSpotlight);
+                        $('#spotlight').append(newSpotlight);
+                        $('#remoteVideos').append(oldSpotlight);
                     }
 
-                    let newSpotlight = $('#' + id + "_video_incoming").detach();
-                    let oldSpotlight = $('#spotlight').children().detach();
-                    console.log(newSpotlight);
-                    console.log(oldSpotlight);
-                    $('#spotlight').append(newSpotlight);
-                    $('#remoteVideos').append(oldSpotlight);
+                    console.log('updated');
                 }
-                console.log('updated');
+
+                updateChatMessages();
             }
 
-            updateChatMessages();
         }
     });
 

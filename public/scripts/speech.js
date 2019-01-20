@@ -28,5 +28,5 @@ function beginSpeechRecognition() {
         }, delay)
     }
     // Start recognition loop.
-    recognition.start();
+    startRecognition(10);
 }
