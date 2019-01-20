@@ -1,7 +1,5 @@
 // Global constants.
 const ENTER_KEY = 13;
-const MAX_SUBTITLE_LENGTH = 96; // Max subtitle characters to display.
-const SUBTITLE_MULTILINE_THRESHOLD = 60; // In pixels. Subtitle height above this number = multiline styling.
 
 // Chat platform
 const chatTemplate = Handlebars.compile($('#chat-template').html());
@@ -12,14 +10,28 @@ const messages = [];
 var userName = 'Undefined User';
 var inRoom = false;
 var myUniqueId = "";
-var subtitleParent = document.getElementById('subtitleParent');
 var subtitle = document.getElementById('subtitle');
 // Translation and speech.
 // Translate -> Google Translate language code; HTML -> BCP-47.
 const languages = [
-    { displayName: "English", translateLangCode: "en", htmlLangCode: "en-US" },
-    { displayName: "Français", translateLangCode: "fr", htmlLangCode: "fr-FR" },
-    { displayName: "中文 (简体)", translateLangCode: "zh-CN", htmlLangCode: "zh-CN" }
+    { // English
+        displayName: "English",
+        translateLangCode: "en",
+        htmlLangCode: "en-US",
+        maxSubtitleChars: 96
+    },
+    { // French
+        displayName: "Français",
+        translateLangCode: "fr",
+        htmlLangCode: "fr-FR",
+        maxSubtitleChars: 96
+    },
+    { // Chinese (Simplified)
+        displayName: "中文 (简体)",
+        translateLangCode: "zh-CN",
+        htmlLangCode: "zh-CN",
+        maxSubtitleChars: 48
+    }
 ];
 
 var languageIndex = 0; // Default to English.
@@ -146,22 +158,26 @@ function send() {
 
 function setSubtitleText(text) {
     subtitle.textContent = text;
-    var subtitleHeight = $('#subtitle').height();
-    let isMultiLine = (subtitleHeight > SUBTITLE_MULTILINE_THRESHOLD);
+    let subParent = $('#subtitleParent');
+    let curFontSize = 32;
+    let targetSubtitleHeight = curFontSize * 2; // Desired subtitles element height to approx. two lines.
 
-    if (isMultiLine) {
-        subtitleParent.style.bottom = '62px'; // TWO LINES: Push subtitles up.
+    subParent.css('font-size', curFontSize);
+
+    while(subParent.height() > targetSubtitleHeight) {
+        subParent.css('font-size', curFontSize);
+        curFontSize--;
     }
-    else {
-        subtitleParent.style.bottom = '34px'; // ONE LINE: Subtitle back to bottom.
-    }
+    
+    // Automatically anchor subtitles to bottom of spotlight video.
+    subParent.css('bottom', subParent.height() + 10) + 'px';
 }
 
 function capitalizeSentence(sentence) {
     let firstChar = sentence.charAt(0);
     let firstCharUpper = firstChar.toUpperCase();
 
-    if(firstChar !== firstCharUpper) {
+    if (firstChar !== firstCharUpper) {
         return firstCharUpper + sentence.substring(1);
     }
 
@@ -234,6 +250,7 @@ window.addEventListener('load', () => {
         if (data.type === 'msg') {
             // Received message data from room, chat messages, transcriptions, etc.
             let message = data.payload;
+            let maxSubChars = languages[languageIndex].maxSubtitleChars;
 
             // Translate the message!
             /*
@@ -250,61 +267,56 @@ window.addEventListener('load', () => {
                 let resp = JSON.parse('{"data":' + request.response + '}');
                 console.log(resp);
                 message.text = resp.data[0][0][0];*/
-                messages.push(message);
+            messages.push(message);
 
-                if (message.type == 2) {
-                    // Received transcription data.
+            if (message.type == 2) {
+                // Received transcription data.
 
-                    let id = message.uniqueId;
-                    console.log(id);
-                    if ($('#' + id + "_video_incoming").length > 0) {
-                        if ($('#' + id + "_video_incoming").parent().attr('id') == 'spotlight') {
-                            let fullText = subtitle.textContent;
+                let id = message.uniqueId;
+                // console.log(id);
+                if ($('#' + id + "_video_incoming").length > 0) {
+                    if ($('#' + id + "_video_incoming").parent().attr('id') == 'spotlight') {
+                        let fullText = subtitle.textContent;
 
-                            if(fullText.length > 0) {
-                                // Prepend a space if there is something already.
-                                fullText += ' ';
-                            }
-                            
-                            // Append the new sentence and period.
-                            fullText += message.text + '.';
-
-                            if (fullText.length > MAX_SUBTITLE_LENGTH) {
-                                // Prepend ellipsis when previous sentences are cut off.
-                                fullText = '...' + fullText.substr(fullText.length - MAX_SUBTITLE_LENGTH, fullText.length);
-                            }
-
-                            setSubtitleText(fullText);
-                            updateChatMessages();
-                            console.log('spotlight still speaking...');
-                            return;
+                        if (fullText.length > 0) {
+                            // Prepend a space if there is something already.
+                            fullText += ' ';
                         }
 
-                        // Move spotlight to user who just spoke
-                        setSubtitleText(message.text); // Reset subtitle.
-                        let newSpotlight = $('#' + id + "_video_incoming").detach();
-                        let oldSpotlight = $('#spotlight').children("video").detach();
-                        //console.log(newSpotlight);
-                        //console.log(oldSpotlight);
+                        // Append the new sentence and period.
+                        fullText += message.text + '.';
 
-                        // Swap places with spotlight and small video.
-                        $('#spotlight').prepend(newSpotlight);
-                        $('#remoteVideos').append(oldSpotlight);
+                        if (fullText.length > maxSubChars) {
+                            // Prepend ellipsis when previous sentences are cut off.
+                            fullText = '...' + fullText.substr(fullText.length - maxSubChars, fullText.length);
+                        }
+
+                        setSubtitleText(fullText);
+                        updateChatMessages();
+                        // console.log('spotlight still speaking...');
+                        return;
                     }
 
-                    console.log('updated');
-                }
+                    // Move spotlight to user who just spoke
+                    setSubtitleText(message.text); // Reset subtitle.
+                    let newSpotlight = $('#' + id + "_video_incoming").detach();
+                    let oldSpotlight = $('#spotlight').children("video").detach();
+                    //console.log(newSpotlight);
+                    //console.log(oldSpotlight);
 
-                updateChatMessages();
-                /*
+                    // Swap places with spotlight and small video.
+                    $('#spotlight').prepend(newSpotlight);
+                    $('#remoteVideos').append(oldSpotlight);
+                }
             }
-*/
+
+            updateChatMessages();
         }
     });
 
     // Remote video was added
     webrtc.on('videoAdded', (video, peer) => {
-        console.log(remoteVideosCount + " videos, now adding", video);
+        // console.log(remoteVideosCount + " videos, now adding", video);
         const id = webrtc.getDomId(peer);
         if (remoteVideosCount === 0) {
             $('#spotlight').prepend(video);
