@@ -14,6 +14,7 @@ body {
     margin-right:auto;
 }
 .videobar video{
+    z-index: 2!important;
     height:25vh!important;
     margin-left:10px;
     margin-right:auto;
