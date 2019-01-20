@@ -2,8 +2,9 @@ const express = require('express');
 const expressWebSocket = require('express-ws');
 const app = express();
 const port = 8080;
+require('dotenv').load();
 // const intoStream = require('into-stream');
-var apiKey = "AIzaSyBsGGlwPghAxSwIhaRANfXBbV65fq2OMWM";
+
 //google cloud speech to text API setup
 // const record = require('node-record-lpcm16');
 // Imports the Google Cloud client library
@@ -66,7 +67,7 @@ wss.on('connection', function (ws) {
   // recognizeStream.write(request);
   ws.on('message', function (data) {
     if (data === "key") {
-      ws.send(apiKey);
+      ws.send(process.env.apiKey);
     }
 
     //MODIFY: data.data.payload.text
