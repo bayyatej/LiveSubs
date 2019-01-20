@@ -233,7 +233,7 @@ window.addEventListener('load', () => {
     webrtc.on('localStream', (AVStream) => {
         myUniqueId = webrtc.connection.connection.id;
 
-        beginSpeechRecognition(AVStream);
+        beginSpeechRecognition(AVStream.getAudioTracks()[0]);
         localVideoEl.show();
         var speechEvents = hark(stream, {});
         speechEvents.on('speaking', function () {

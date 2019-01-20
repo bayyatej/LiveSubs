@@ -16,7 +16,7 @@ const speech = require('@google-cloud/speech');
 const client = new speech.SpeechClient();
 
 const encoding = 'LINEAR16';
-const sampleRateHertz = 16000;
+const sampleRateHertz = 48000;
 const languageCode = 'en-US';
 
 
@@ -27,18 +27,24 @@ const request = {
       languageCode: languageCode,
     },
     interimResults: true, // If you want interim results, set this to true
+    single_utterance: true,
   };
 
 // Create a recognize stream
 const recognizeStream = client
   .streamingRecognize(request)
-  .on('error', console.error)
-  .on('data', data => //change below to send to client
+  .on('error', function(e){
+      console.log(e);
+  })
+  .on('data', function(data){
     process.stdout.write(
-      data.results[0] && data.results[0].alternatives[0]
-        ? `Transcription: ${data.results[0].alternatives[0].transcript}\n`
-        : `\n\nReached transcription time limit, press Ctrl+C\n`
-    )
+        data.results[0] && data.results[0].alternatives[0]
+          ? `Transcription: ${data.results[0].alternatives[0].transcript}\n`
+          : `\n\nReached transcription time limit, press Ctrl+C\n`
+      );
+    console.log(data);
+  } 
+    
   );
 
 
@@ -59,7 +65,7 @@ wss.on('connection', function (ws) {
     const stream = message
 
     console.log('stream found');
-    intoStream(stream).pipe(recognizeStream);
+    intoStream('stream').pipe(recognizeStream);
   })
   //PSEUDOCODE
   /*ws.on('message',function(){
