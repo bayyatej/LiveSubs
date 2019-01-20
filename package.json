@@ -1,10 +1,9 @@
 {
-  "name": "LiveSub",
+  "name": "LiveSubs",
   "version": "1.0.0",
   "description": "",
   "main": "server.js",
   "dependencies": {
-    "@google-cloud/speech": "^2.2.0",
     "@google-cloud/translate": "^2.1.3",
     "dotenv": "^6.2.0",
     "express": "^4.16.4",
@@ -14,7 +13,6 @@
     "into-stream": "^4.0.0",
     "jquery": "^3.3.1",
     "semantic-ui-css": "^2.4.1",
-    "serve": "^10.1.1",
     "simplewebrtc": "^3.0.2",
     "ws": "^6.1.2"
   },
