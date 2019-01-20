@@ -222,7 +222,7 @@ window.addEventListener('load', () => {
                         return;
                     }
                     let newSpotlight=$('#'+id+"_video_incoming").detach();
-                    let oldSpotlight=$('#spotlight').first().detach();
+                    let oldSpotlight=$('#spotlight').children().detach();
                     console.log(newSpotlight);
                     console.log(oldSpotlight);
                     $('#spotlight').append(newSpotlight);
@@ -238,7 +238,7 @@ window.addEventListener('load', () => {
 
     // Remote video was added
     webrtc.on('videoAdded', (video, peer) => {
-        console.log(remoteVideosCount)
+        console.log(remoteVideosCount+" videos, now adding",video);
         const id = webrtc.getDomId(peer);
         if (remoteVideosCount === 0) {
             $('#spotlight').append(video);
