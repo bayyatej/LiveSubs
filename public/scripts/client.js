@@ -7,7 +7,8 @@ const chatContentTemplate = Handlebars.compile($('#chat-content-template').html(
 const chatEl = $('#chat');
 const formEl = $('.form');
 const messages = [];
-let userName = 'Undefined User';
+var userName = 'Undefined User';
+var inRoom = false;
 var myUniqueId = "";
 var subtitle = document.getElementById('subtitle');
 // Translation and speech.
@@ -51,27 +52,45 @@ const webrtc = new SimpleWebRTC({
 });
 
 const showChatRoom = (room) => {
-    // Hide room join form.
-    formEl.hide();
-    let lang = languages[languageIndex].displayName;
+    inRoom = true;
+
     // Update chat header (room name and selected language).
+    let lang = languages[languageIndex].displayName;
     const html = chatTemplate({ room, lang });
     chatEl.html(html);
 
+    // Hide login screen.
+    formEl.hide();
     $('#roomGrid').removeClass("center aligned page");
     $('#chatSegment').removeClass("login").addClass("right wide sidebar visible");
 
-    // Post message for joining user.
-    const joinMsg = {
+    // Clear chat/transcription log.
+    messages.length = 0;
+
+    // Post welcome message for yourself.
+    const joinMsgLocal = {
         name: '',
         text: 'Hello, ' + userName + '. Welcome to ' + room + '!',
         type: 0,
         uniqueId: ''
     };
 
-    messages.push(joinMsg);
+    messages.push(joinMsgLocal);
     updateChatMessages();
 
+    // Broadcast the user's name to other users (200 ms delay to workaround bug).
+    setTimeout(function() {
+        const joinMsgOthers = {
+            name: '',
+            text: userName + ' joined the room!',
+            type: 0,
+            uniqueId: ''
+        };
+    
+        webrtc.sendToAll('msg', joinMsgOthers);
+    }, 200);
+
+    // Setup messaging event listeners.
     $('#submitMsgBtn').on('click', () => {
         // Add listener for clicking submit button.
         const message = $('#msgField').val();
@@ -134,6 +153,10 @@ const updateChatMessages = () => {
 };
 
 function transmitSpeech(message) {
+    if (!inRoom) {
+        return; // Don't transcribe audio when inside room.
+    }
+
     message = message.trim(); // Remove whitespace.
 
     if (message.length == 0) {
@@ -159,7 +182,7 @@ window.addEventListener('load', () => {
     // Setup language dropdown.
     $('#langDropdown').dropdown('set selected', 'English');
 
-    $('#langDropdown').change(function() {
+    $('#langDropdown').change(function () {
         // Update language index.
         languageIndex = $('#langDropdown').dropdown('get value');
     });
@@ -208,21 +231,23 @@ window.addEventListener('load', () => {
     // Receive message from remote user
     webrtc.connection.on('message', (data) => {
         if (data.type === 'msg') {
-            //translate data
+            // Received message data from room, chat messages, transcriptions, etc.
             const message = data.payload;
             messages.push(message);
-            if (message.type==2){
-                subtitle.textContent=message.text;
-                let id=message.uniqueId;
+
+            if (message.type == 2) {
+                // Received transcription data.
+                subtitle.textContent = message.text;
+                let id = message.uniqueId;
                 console.log(id);
-                if($('#'+id+"_video_incoming").length>0){
+                if ($('#' + id + "_video_incoming").length > 0) {
                     console.log('found id');
-                    if($('#'+id+"_video_incoming").parent().attr('id')=='spotlight'){
+                    if ($('#' + id + "_video_incoming").parent().attr('id') == 'spotlight') {
                         console.log('its already there');
                         return;
                     }
-                    let newSpotlight=$('#'+id+"_video_incoming").detach();
-                    let oldSpotlight=$('#spotlight').first().detach();
+                    let newSpotlight = $('#' + id + "_video_incoming").detach();
+                    let oldSpotlight = $('#spotlight').first().detach();
                     console.log(newSpotlight);
                     console.log(oldSpotlight);
                     $('#spotlight').append(newSpotlight);
@@ -230,15 +255,13 @@ window.addEventListener('load', () => {
                 }
                 console.log('updated');
             }
-                
-            //show this user
+
             updateChatMessages();
         }
     });
 
     // Remote video was added
     webrtc.on('videoAdded', (video, peer) => {
-        console.log(remoteVideosCount)
         const id = webrtc.getDomId(peer);
         if (remoteVideosCount === 0) {
             $('#spotlight').append(video);
