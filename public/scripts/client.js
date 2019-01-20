@@ -31,6 +31,12 @@ const languages = [
         translateLangCode: "zh-CN",
         htmlLangCode: "zh-CN",
         maxSubtitleChars: 48
+    },
+    { // Japanese
+        displayName: "日本語",
+        translateLangCode: "ja",
+        htmlLangCode: "ja-JP",
+        maxSubtitleChars: 48
     }
 ];
 
