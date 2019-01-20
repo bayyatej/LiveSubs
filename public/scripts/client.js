@@ -13,6 +13,7 @@ var inRoom = false;
 var myUniqueId = "";
 var subtitleParent = document.getElementById('subtitleParent');
 var subtitle = document.getElementById('subtitle');
+var gracePeriod = false;
 // Translation and speech.
 // Translate -> Google Translate language code; HTML -> BCP-47.
 const languages = [
@@ -160,21 +161,21 @@ function send() {
 
 function setSubtitleText(text) {
     subtitle.textContent = text;
-    $( '#subtitleParent' ).each(function ( key, value ) {
-        let targetHeight=60;
-        let currHeight=$(value).height();
+    $('#subtitleParent').each(function (key, value) {
+        let targetHeight = 60;
+        let currHeight = $(value).height();
         let n = 35;
-    
-        $( value ).css( 'font-size', n );
-    
-        while ( $( value ).height() > targetHeight) {
-            $( value ).css( 'font-size', --n );
+
+        $(value).css('font-size', n);
+
+        while ($(value).height() > targetHeight) {
+            $(value).css('font-size', --n);
         }
 
         // console.log("final text size: "+n);
-    
+
     });
-    subtitleParent.style.bottom = ($('#subtitle').height()+10)+'px';
+    subtitleParent.style.bottom = ($('#subtitle').height() + 10) + 'px';
 }
 
 function capitalizeSentence(sentence) {
@@ -227,11 +228,22 @@ window.addEventListener('load', () => {
     });
 
     // We got access to local camera
-    webrtc.on('localStream', () => {
+    webrtc.on('localStream', function (stream) {
         myUniqueId = webrtc.connection.connection.id;
 
         beginSpeechRecognition();
         localVideoEl.show();
+        var speechEvents = hark(stream, {});
+        speechEvents.on('speaking', function () {
+            if (gracePeriod) {
+                return;
+            }
+            const harkMsg = {
+                uniqueId: myUniqueId
+            };
+            webrtc.sendToAll('hark', harkMsg);
+        });
+
     });
 
     $('.submit').on('click', (event) => {
@@ -303,14 +315,10 @@ window.addEventListener('load', () => {
 
                     // Move spotlight to user who just spoke
                     setSubtitleText(message.text); // Reset subtitle.
-                    let newSpotlight = $('#' + id + "_video_incoming").detach();
-                    let oldSpotlight = $('#spotlight').children("video").detach();
-                    //console.log(newSpotlight);
-                    //console.log(oldSpotlight);
-
-                    // Swap places with spotlight and small video.
-                    $('#spotlight').prepend(newSpotlight);
-                    $('#remoteVideos').append(oldSpotlight);
+                    gracePeriod = true;
+                    setTimeout(function () {
+                        gracePeriod = false;
+                    }, 1000)
                 }
 
             }
@@ -319,9 +327,33 @@ window.addEventListener('load', () => {
             /*
         }
 */
+        } else if (data.type === "hark") {
+            let message=data.payload;
+            console.log("got hark "+message.uniqueId);
+            let id = message.uniqueId;
+            // console.log(id);
+            if ($('#' + id + "_video_incoming").length > 0) {
+                if ($('#' + id + "_video_incoming").parent().attr('id') == 'spotlight') {
+                    return;
+                }
+
+                // Move spotlight to user who just spoke
+                setSubtitleText(""); // Reset subtitle.
+                setSpotlight(id);
+                
+            }
         }
     });
+    function setSpotlight(userId){
+        let newSpotlight = $('#' + userId + "_video_incoming").detach();
+        let oldSpotlight = $('#spotlight').children("video").detach();
+        //console.log(newSpotlight);
+        //console.log(oldSpotlight);
 
+        // Swap places with spotlight and small video.
+        $('#spotlight').prepend(newSpotlight);
+        $('#remoteVideos').append(oldSpotlight);
+    }
     // Remote video was added
     webrtc.on('videoAdded', (video, peer) => {
         // console.log(remoteVideosCount + " videos, now adding", video);
