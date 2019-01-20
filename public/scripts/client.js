@@ -21,11 +21,24 @@ const languages = [
         htmlLangCode: "en-US",
         maxSubtitleChars: 96
     },
-    { // French
-        displayName: "Français",
-        translateLangCode: "fr",
-        htmlLangCode: "fr-FR",
+    {//Afrikaans
+        displayName:"Afrikaans",
+        translateLangCode: "af",
+        htmlLangCode: "af",
         maxSubtitleChars: 96
+    },
+    {//Arabic (Jordan)
+        displayName: "Arabic",
+        translateLangCode: "ar",
+        htmlLangCode: "ar-JO",
+        maxSubChars: 60
+
+    },
+    {//Bulgarian
+        displayName: "Bulgarian",
+        translateLangCode: "",
+        htmlLangCode: "bg",
+        maxSubChars: 96
     },
     { // Chinese (Simplified)
         displayName: "中文 (简体)",
@@ -33,10 +46,73 @@ const languages = [
         htmlLangCode: "zh-CN",
         maxSubtitleChars: 48
     },
-    { // Japanese
+    {//Czech
+        displayName: "Czech",
+        translateLangCode: "",
+        htmlLangCode: "cs",
+        maxSubChars: 96
+    },{//German
+        displayName: "German",
+        translateLangCode: "",
+        htmlLangCode: "de-DE",
+        maxSubtitleChars: 96
+    },
+    {//Spanish
+        displayName: "",
+        translateLangCode: "",
+        htmlLangCode: "es-SP",
+        maxSubtitleChars: 96
+    },
+    {//Finnish
+        displayName: "Finnish",
+        translateLangCode: "",
+        htmlLangCode: "fi",
+        maxSubChars: 96
+    },    
+    { // French
+        displayName: "Français",
+        translateLangCode: "fr",
+        htmlLangCode: "fr-FR",
+        maxSubtitleChars: 96
+    },{ // Japanese
         displayName: "日本語",
         translateLangCode: "ja",
         htmlLangCode: "ja-JP",
+        maxSubtitleChars: 48
+    },{//Korean
+        displayName: "Korean",
+        translateLangCode: "",
+        htmlLangCode: "ko",
+        maxSubtitleChars: 48
+    },{//Dutch
+        displayName: "Dutch",
+        translateLangCode: "",
+        htmlLangCode: "nl-NL",
+        maxSubChars: 96
+    },{//Portuguese
+        displayName: "P",
+        translateLangCode: "",
+        htmlLangCode: "pt-PT",
+        maxSubtitleChars: 96
+    },{//Russian
+        displayName: "",
+        translateLangCode: "",
+        htmlLangCode: "ru",
+        maxSubtitleChars: 96
+    },{//Swedish
+        displayName: "",
+        translateLangCode: "",
+        htmlLangCode: "sv-SE",
+        maxSubtitleChars: 96
+    },{//Turkish
+        displayName: "",
+        translateLangCode: "",
+        htmlLangCode: "tr",
+        maxSubtitleChars: 96
+    },{//Traditional Taiwanese
+        displayName: "",
+        translateLangCode: "",
+        htmlLangCode: "zh-TW",
         maxSubtitleChars: 48
     }
 ];
