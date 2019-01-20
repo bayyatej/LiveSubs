@@ -241,7 +241,7 @@ window.addEventListener('load', () => {
         console.log(remoteVideosCount)
         const id = webrtc.getDomId(peer);
         if (remoteVideosCount === 0) {
-            $('#spotlight').html(video);
+            $('#spotlight').append(video);
         } else {
             remoteVideosEl.append(video);
         }
