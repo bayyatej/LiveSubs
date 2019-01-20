@@ -74,7 +74,6 @@ wss.on('connection', function (ws) {
     //RETURN: data.data
     //LANGUAGE: data.lang
     // data=JSON.parse(data);
-    // const apikey="AIzaSyBsGGlwPghAxSwIhaRANfXBbV65fq2OMWM";
     // console.log("data: %j",data.data);
     // var requestURL = "https://translate.googleapis.com/translate_a/single?client=gtx&sl=auto&tl=" +
     // data.lang + "&dt=t&q=" + encodeURI(data.data.payload.text)+"&key=";
