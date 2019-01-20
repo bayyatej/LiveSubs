@@ -171,11 +171,11 @@ function setSubtitleText(text) {
 
     subParent.css('font-size', curFontSize);
 
-    while(subParent.height() > targetSubtitleHeight) {
+    while (subParent.height() > targetSubtitleHeight) {
         subParent.css('font-size', curFontSize);
         curFontSize--;
     }
-    
+
     // Automatically anchor subtitles to bottom of spotlight video.
     subParent.css('bottom', subParent.height() + 10) + 'px';
 }
@@ -325,9 +325,10 @@ window.addEventListener('load', () => {
             }
 
             updateChatMessages();
-        } else if (data.type === "hark") {
-            let message=data.payload;
-            console.log("got hark "+message.uniqueId);
+        }
+        else if (data.type === "hark") {
+            let message = data.payload;
+            console.log("got hark " + message.uniqueId);
             let id = message.uniqueId;
             // console.log(id);
             if ($('#' + id + "_video_incoming").length > 0) {
@@ -338,11 +339,11 @@ window.addEventListener('load', () => {
                 // Move spotlight to user who just spoke
                 setSubtitleText(""); // Reset subtitle.
                 setSpotlight(id);
-                
+
             }
         }
     });
-    function setSpotlight(userId){
+    function setSpotlight(userId) {
         let newSpotlight = $('#' + userId + "_video_incoming").detach();
         let oldSpotlight = $('#spotlight').children("video").detach();
         //console.log(newSpotlight);
