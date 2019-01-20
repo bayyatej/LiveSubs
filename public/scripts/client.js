@@ -119,8 +119,8 @@ const languages = [
     },
     { // Telegu
         displayName: "తెలుగు",
-        translateLangCode: "tel",
-        htmlLangCode: "tel",
+        translateLangCode: "te",
+        htmlLangCode: "te",
         maxSubtitleChars: 60
     },
     { // Turkish
