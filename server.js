@@ -4,7 +4,7 @@ const fs = require('fs');
 const websocketStream = require('websocket-stream/stream');
 const app = express();
 const port = 8080;
-
+/*
 //google cloud speech to text API setup
 const api_key = 'AIzaSyAmHUszpQhr4bik5IFMBddONoarqsggB8c';
 const record = require('node-record-lpcm16');
@@ -13,6 +13,20 @@ const speech = require('@google-cloud/speech');
 
 // Creates a client
 const client = new speech.SpeechClient();
+
+const encoding = 'Encoding of the audio file, e.g. LINEAR16';
+const sampleRateHertz = 16000;
+const languageCode = 'BCP-47 language code, e.g. en-US';
+
+
+const request = {
+    config: {
+      encoding: encoding,
+      sampleRateHertz: sampleRateHertz,
+      languageCode: languageCode,
+    },
+    interimResults: true, // If you want interim results, set this to true
+  };
 
 // Create a recognize stream
 const recognizeStream = client
@@ -25,16 +39,7 @@ const recognizeStream = client
         : `\n\nReached transcription time limit, press Ctrl+C\n`
     )
   );
-
-const request = {
-    config: {
-      encoding: encoding,
-      sampleRateHertz: sampleRateHertz,
-      languageCode: languageCode,
-    },
-    interimResults: true, // If you want interim results, set this to true
-  };
-
+*/
 
 //express server setup
 app.all('/', function (req, res, next) {
@@ -45,14 +50,18 @@ app.all('/', function (req, res, next) {
 var WebSocketServer = require('ws').Server,
   wss = new WebSocketServer({port: 40510})
 wss.on('connection', function (ws) {
+    console.log("connected")
   ws.on('message', function (message) {
-      //TODO: Send to cloud speech api and send back to client
-    console.log(JSON.parse(message).connected[2]);
+    console.log("message recieved by server")
+    const stream = websocketStream(ws, {
+        // websocket-stream options here
+        binary: true,
+    });
+
+    console.log('stream found');
+    //recognizeStream.process(stream);
   })
-//   setInterval(
-//     () => ws.send(`${new Date()}`),
-//     1000
-//   )
+  
   //PSEUDOCODE
   /*ws.on('message',function(){
       //send to cloud speech api
@@ -72,21 +81,7 @@ app.use((req, res) => res.sendFile(`${__dirname}/public/index.html`));
 expressWebSocket(app, null, {
     // ws options here
     perMessageDeflate: false,
-});
- 
-app.ws(":8080", function(ws, req) {
-
-    ws.on('message', function(msg) {
-        ws.send("msg");
-      });
-    
-    const stream = websocketStream(ws, {
-        // websocket-stream options here
-        binary: true,
-    });
-    console.log('stream found');
-    recognizeStream.process(stream);
-});
+}); 
 
 app.listen(port, () => {
     console.log('listening on ' + port);
