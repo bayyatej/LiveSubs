@@ -128,6 +128,12 @@ const languages = [
         translateLangCode: "zh-TW",
         htmlLangCode: "zh-TW",
         maxSubtitleChars: 48
+    },
+    { // Chinese (Traditional)
+        displayName: "తెలుగు",
+        translateLangCode: "tel",
+        htmlLangCode: "tel",
+        maxSubtitleChars: 48
     }
 ];
 
