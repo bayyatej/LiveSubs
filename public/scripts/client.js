@@ -460,7 +460,6 @@ window.addEventListener('load', () => {
         }
         // Remote video was added
         webrtc.on('videoAdded', (video, peer) => {
-            
             const id = webrtc.getDomId(peer);
             // console.log($('#spotlight video').length);
             if ($('#spotlight video').length<1) {
