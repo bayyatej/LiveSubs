@@ -66,7 +66,8 @@ function transmitSpeech(message) {
         name: userName,
         text: message,
         type: 2,
-        uniqueId: myUniqueId
+        uniqueId: myUniqueId,
+        sl: languages[languageIndex]['translateLangCode']
     };
 
     // Send message to all peers.

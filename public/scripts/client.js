@@ -111,6 +111,12 @@ const languages = [
         htmlLangCode: "sv-SE",
         maxSubtitleChars: 96
     },
+    { // Tamil
+        displayName: "தமிழர்",
+        translateLangCode: "ta",
+        htmlLangCode: "ta",
+        maxSubtitleChars: 60
+    },
     { // Turkish
         displayName: "Türkçe",
         translateLangCode: "tr",
@@ -156,6 +162,7 @@ const webrtc = new SimpleWebRTC({
     // immediately ask for camera access
     autoRequestMedia: true,
 });
+
 
 const showChatRoom = (room) => {
     inRoom = true;
@@ -227,7 +234,8 @@ const postClientMessage = (message) => {
         name: userName,
         text: message,
         type: 1,
-        uniqueId: myUniqueId
+        uniqueId: myUniqueId,
+        sl: languages[languageIndex]['translateLangCode']
     };
 
     // Send message to all peers.
@@ -361,9 +369,14 @@ window.addEventListener('load', () => {
             // Received message data from room, chat messages, transcriptions, etc.
             let message = data.payload;
             let maxSubChars = languages[languageIndex].maxSubtitleChars;
-
+            if(message.type===0){
+                messages.push(message);
+                updateChatMessages();
+                return;
+            }
             // Translate the message!
-            var requestURL = "https://translate.googleapis.com/translate_a/single?client=gtx&sl=auto&tl=" +
+            var sourceLang=message.sl;
+            var requestURL = "https://translate.googleapis.com/translate_a/single?client=gtx&sl="+sourceLang+"&tl=" +
                 languages[languageIndex].translateLangCode + "&dt=t&q=" + encodeURI(message.text) + "&key=" + apiKey;
             var request = new XMLHttpRequest();
             request.open('GET', requestURL);
