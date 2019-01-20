@@ -283,7 +283,7 @@ window.addEventListener('load', () => {
     // Setup language dropdown.
     //request api key
     var apiKey = "";
-    connection.send('key');
+    
     connection.onmessage = function (data) {
         apiKey = data.data;
 
@@ -332,6 +332,7 @@ window.addEventListener('load', () => {
     });
 
     $('.submit').on('click', (event) => {
+        connection.send('key');
         if (!formEl.form('is valid')) {
             return false;
         }
