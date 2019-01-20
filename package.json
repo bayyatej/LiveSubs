@@ -5,6 +5,7 @@
   "main": "server.js",
   "dependencies": {
     "express": "^4.16.4",
+    "express-ws": "^4.0.0",
     "handlebars": "^4.0.12",
     "hark": "^1.2.3",
     "jquery": "^3.3.1",
