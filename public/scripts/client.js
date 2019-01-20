@@ -351,7 +351,6 @@ window.addEventListener('load', () => {
 
         if (data.type === 'msg') {
             // Received message data from room, chat messages, transcriptions, etc.
-            console.log([data, languages[languageIndex]['translateLangCode']]);
             let message = data.payload;
             let maxSubChars = languages[languageIndex].maxSubtitleChars;
 
@@ -363,11 +362,8 @@ window.addEventListener('load', () => {
             request.responseType = 'text';
             request.send();
 
-            console.log(requestURL);
-
             request.onload = function () {
                 let resp = JSON.parse('{"data":' + request.response + '}');
-                console.log(resp);
                 message.text = resp.data[0][0][0];
                 messages.push(message);
 
@@ -375,7 +371,7 @@ window.addEventListener('load', () => {
                     // Received transcription data.
 
                     let id = message.uniqueId;
-                    // console.log(id);
+                    
                     if ($('#' + id + "_video_incoming").length > 0) {
                         if ($('#' + id + "_video_incoming").parent().attr('id') == 'spotlight') {
                             let fullText = subtitle.textContent;
@@ -395,7 +391,7 @@ window.addEventListener('load', () => {
 
                             setSubtitleText(fullText);
                             updateChatMessages();
-                            // console.log('spotlight still speaking...');
+                            
                             return;
                         }
 
@@ -415,9 +411,9 @@ window.addEventListener('load', () => {
 
         } else if (data.type === "hark") {
             let message = data.payload;
-            console.log("got hark " + message.uniqueId);
+
             let id = message.uniqueId;
-            // console.log(id);
+            
             if ($('#' + id + "_video_incoming").length > 0) {
                 if ($('#' + id + "_video_incoming").parent().attr('id') == 'spotlight') {
                     return;
@@ -432,8 +428,8 @@ window.addEventListener('load', () => {
         function setSpotlight(userId) {
             let newSpotlight = $('#' + userId + "_video_incoming").detach();
             let oldSpotlight = $('#spotlight').children("video").detach();
-            //console.log(newSpotlight);
-            //console.log(oldSpotlight);
+            
+            
 
             // Swap places with spotlight and small video.
             $('#spotlight').prepend(newSpotlight);
@@ -441,7 +437,7 @@ window.addEventListener('load', () => {
         }
         // Remote video was added
         webrtc.on('videoAdded', (video, peer) => {
-            // console.log(remoteVideosCount + " videos, now adding", video);
+            
             const id = webrtc.getDomId(peer);
             if (remoteVideosCount === 0) {
                 $('#spotlight').prepend(video);
