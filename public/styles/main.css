@@ -42,3 +42,6 @@ body {
     top: 50%;
     transform: translateY();
 }
+.item {
+    background-color: #eeeeee;
+}

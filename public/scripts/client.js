@@ -370,11 +370,9 @@ window.addEventListener('load', () => {
 
     // Receive message from remote user
     webrtc.connection.on('message', (data) => {
-
         if (data.type === 'msg') {
             // Received message data from room, chat messages, transcriptions, etc.
             let message = data.payload;
-            let maxSubChars = languages[languageIndex].maxSubtitleChars;
             if(message.type===0){
                 messages.push(message);
                 updateChatMessages();
@@ -401,6 +399,7 @@ window.addEventListener('load', () => {
                     
                     if ($('#' + id + "_video_incoming").length > 0) {
                         if ($('#' + id + "_video_incoming").parent().attr('id') == 'spotlight') {
+                            let maxSubChars = languages[languageIndex].maxSubtitleChars;
                             let fullText = subtitle.textContent;
 
                             if (fullText.length > 0) {
