@@ -18,6 +18,7 @@ function beginSpeechRecognition(AVStream) {
     {
         transmitSpeech(message);
     }
+    
     // window.SpeechRecognition = window.webkitSpeechRecognition || window.SpeechRecognition;
     
     // const recognition = new window.SpeechRecognition();
