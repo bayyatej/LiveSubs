@@ -14,11 +14,17 @@
 <body>
     <!-- Main Content -->
     <div class="ui container">
-        <!-- Remote Camera -->
-        <div id="spotlight" class="big-video"></div>
+        <!-- Main speaker/person -->
+        <div id="spotlight" class="big-video">
+            <div id="subtitleParent" class="floating-sub">
+                <span id="subtitle"></span>
+            </div>
+        </div>
+
+        <!-- Other videos in room -->
         <div id="remoteVideos" class="videobar">
         </div>
-        <div class="floating-sub"><span id="subtitle"></span></div>
+
         <div class="ui two column stackable center aligned page grid" id="roomGrid">
             <div class="ui ten wide column">
                 <div id="chatSegment" class="ui segment login">
