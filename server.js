@@ -4,7 +4,7 @@ const fs = require('fs');
 const websocketStream = require('websocket-stream/stream');
 const app = express();
 const port = 8080;
-/*
+
 //google cloud speech to text API setup
 const api_key = 'AIzaSyAmHUszpQhr4bik5IFMBddONoarqsggB8c';
 const record = require('node-record-lpcm16');
@@ -39,7 +39,7 @@ const recognizeStream = client
         : `\n\nReached transcription time limit, press Ctrl+C\n`
     )
   );
-*/
+
 
 //express server setup
 app.all('/', function (req, res, next) {
@@ -59,9 +59,8 @@ wss.on('connection', function (ws) {
     });
 
     console.log('stream found');
-    //recognizeStream.process(stream);
+    //recognizeStream.process(message);
   })
-  
   //PSEUDOCODE
   /*ws.on('message',function(){
       //send to cloud speech api
