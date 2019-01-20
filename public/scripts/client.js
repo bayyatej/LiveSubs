@@ -1,5 +1,7 @@
 // Global constants.
 const ENTER_KEY = 13;
+const MAX_SUBTITLE_LENGTH = 96; // Max subtitle characters to display.
+const SUBTITLE_MULTILINE_THRESHOLD = 60; // In pixels. Subtitle height above this number = multiline styling.
 
 // Chat platform
 const chatTemplate = Handlebars.compile($('#chat-template').html());
@@ -10,9 +12,10 @@ const messages = [];
 var userName = 'Undefined User';
 var inRoom = false;
 var myUniqueId = "";
+var subtitleParent = document.getElementById('subtitleParent');
 var subtitle = document.getElementById('subtitle');
 // Translation and speech.
-// Translate -> Google Translate language code, HTML -> BCP-47.
+// Translate -> Google Translate language code; HTML -> BCP-47.
 const languages = [
     { displayName: "English", translateLangCode: "en", htmlLangCode: "en-US" },
     { displayName: "Français", translateLangCode: "fr", htmlLangCode: "fr-FR" },
@@ -141,6 +144,30 @@ function send() {
     xhr.send(JSON.stringify(number))
 }
 
+function setSubtitleText(text) {
+    subtitle.textContent = text;
+    var subtitleHeight = $('#subtitle').height();
+    let isMultiLine = (subtitleHeight > SUBTITLE_MULTILINE_THRESHOLD);
+
+    if (isMultiLine) {
+        subtitleParent.style.bottom = '62px'; // TWO LINES: Push subtitles up.
+    }
+    else {
+        subtitleParent.style.bottom = '34px'; // ONE LINE: Subtitle back to bottom.
+    }
+}
+
+function capitalizeSentence(sentence) {
+    let firstChar = sentence.charAt(0);
+    let firstCharUpper = firstChar.toUpperCase();
+
+    if(firstChar !== firstCharUpper) {
+        return firstCharUpper + sentence.substring(1);
+    }
+
+    return sentence; // Already capitalized.
+}
+
 // Update Chat Messages
 const updateChatMessages = () => {
     const html = chatContentTemplate({ messages });
@@ -206,32 +233,72 @@ window.addEventListener('load', () => {
     webrtc.connection.on('message', (data) => {
         if (data.type === 'msg') {
             // Received message data from room, chat messages, transcriptions, etc.
-            const message = data.payload;
-            messages.push(message);
+            let message = data.payload;
 
-            if (message.type == 2) {
-                // Received transcription data.
-                subtitle.textContent = message.text;
-                let id = message.uniqueId;
-                console.log(id);
-                if ($('#' + id + "_video_incoming").length > 0) {
-                    console.log('found id');
-                    if ($('#' + id + "_video_incoming").parent().attr('id') == 'spotlight') {
-                        console.log('its already there');
-                        return;
+            // Translate the message!
+            /*
+            var requestURL = "https://translate.googleapis.com/translate_a/single?client=gtx&sl=auto&tl=" +
+                languages[languageIndex].translateLangCode + "&dt=t&q=" + encodeURI(message.text);
+            var request = new XMLHttpRequest();
+            request.open('GET', requestURL);
+            request.responseType = 'text';
+            request.send();
+
+            console.log(requestURL);
+
+            request.onload = function () {
+                let resp = JSON.parse('{"data":' + request.response + '}');
+                console.log(resp);
+                message.text = resp.data[0][0][0];*/
+                messages.push(message);
+
+                if (message.type == 2) {
+                    // Received transcription data.
+
+                    let id = message.uniqueId;
+                    console.log(id);
+                    if ($('#' + id + "_video_incoming").length > 0) {
+                        if ($('#' + id + "_video_incoming").parent().attr('id') == 'spotlight') {
+                            let fullText = subtitle.textContent;
+
+                            if(fullText.length > 0) {
+                                // Prepend a space if there is something already.
+                                fullText += ' ';
+                            }
+                            
+                            // Append the new sentence and period.
+                            fullText += message.text + '.';
+
+                            if (fullText.length > MAX_SUBTITLE_LENGTH) {
+                                // Prepend ellipsis when previous sentences are cut off.
+                                fullText = '...' + fullText.substr(fullText.length - MAX_SUBTITLE_LENGTH, fullText.length);
+                            }
+
+                            setSubtitleText(fullText);
+                            updateChatMessages();
+                            console.log('spotlight still speaking...');
+                            return;
+                        }
+
+                        // Move spotlight to user who just spoke
+                        setSubtitleText(message.text); // Reset subtitle.
+                        let newSpotlight = $('#' + id + "_video_incoming").detach();
+                        let oldSpotlight = $('#spotlight').children("video").detach();
+                        //console.log(newSpotlight);
+                        //console.log(oldSpotlight);
+
+                        // Swap places with spotlight and small video.
+                        $('#spotlight').prepend(newSpotlight);
+                        $('#remoteVideos').append(oldSpotlight);
                     }
 
-                    let newSpotlight = $('#' + id + "_video_incoming").detach();
-                    let oldSpotlight = $('#spotlight').children().detach();
-                    console.log(newSpotlight);
-                    console.log(oldSpotlight);
-                    $('#spotlight').append(newSpotlight);
-                    $('#remoteVideos').append(oldSpotlight);
+                    console.log('updated');
                 }
-                console.log('updated');
-            }
 
-            updateChatMessages();
+                updateChatMessages();
+                /*
+            }
+*/
         }
     });
 
@@ -240,8 +307,9 @@ window.addEventListener('load', () => {
         console.log(remoteVideosCount + " videos, now adding", video);
         const id = webrtc.getDomId(peer);
         if (remoteVideosCount === 0) {
-            $('#spotlight').append(video);
-        } else {
+            $('#spotlight').prepend(video);
+        }
+        else {
             remoteVideosEl.append(video);
         }
         // $(`#${id}`).html(video);

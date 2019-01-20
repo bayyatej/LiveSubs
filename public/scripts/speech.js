@@ -27,8 +27,9 @@ function beginSpeechRecognition() {
             }
         }, delay)
     }
+
     // Start recognition loop.
-    recognition.start();
+    startRecognition(10);
 }
 
 function transmitSpeech(message) {
@@ -42,6 +43,15 @@ function transmitSpeech(message) {
         return;
     }
 
+    // Capitalize the transcribed message, we are treating it as a sentence.
+    message = capitalizeSentence(message);
+
+    if(message.charAt(message.length - 1) == '.') {
+        // Remove periods picked up (sometimes) from the speech recognition.
+        // We are automatically handling this.
+        message = message.substring(0, message.length - 1);
+    }
+
     const msg = {
         name: userName,
         text: message,
@@ -51,6 +61,7 @@ function transmitSpeech(message) {
 
     // Send message to all peers.
     webrtc.sendToAll('msg', msg);
+
     // Update our message list locally.
     messages.push(msg);
     updateChatMessages();
