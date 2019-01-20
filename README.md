@@ -11,9 +11,10 @@ This was created during the 36-hour hackathon, [SpartaHack V](https://spartahack
 - [Hark](https://www.npmjs.com/package/hark)
 - [Handlebars](http://handlebarsjs.com/)
 - [Into-Stream](https://github.com/sindresorhus/into-stream)
+- [dotenv](https://github.com/motdotla/dotenv#readme)
 - Many others can be viewed in package.json
 
 # Services Used
 - Google Cloud App Engine
 - Google Translate API
-- Google Speech-to-Text API
+- HTML5 Speech-to-Text API
