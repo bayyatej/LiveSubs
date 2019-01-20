@@ -15,7 +15,7 @@ body {
 }
 .videobar video{
     height:25vh!important;
-    margin-left:auto;
+    margin-left:10px;
     margin-right:auto;
 }
 .userCamera{
@@ -27,16 +27,19 @@ body {
     top: 3px;
 }
 .floating-sub{
-    color:white;
-    text-shadow: -1px -1px 0 #000,  
+    color: white;
+    text-shadow: -1px -1px 0 #000,
                 1px -1px 0 #000,
                 -1px 1px 0 #000,
                 1px 1px 0 #000;
-    z-index: 5!important;
-    top: 10vh;
+    position: relative;
+    bottom: 34px;
+    padding-left: 20%;
+    padding-right: 20%;
+    z-index: 1;
     font-size: 2rem;
-    text-align: center;
-    line-height: 1.2rem;
+    text-align: center !important;
+    line-height: 2rem;
 }
 .login {
     position: relative;

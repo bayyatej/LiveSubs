@@ -30,3 +30,28 @@ function beginSpeechRecognition() {
     // Start recognition loop.
     recognition.start();
 }
+
+function transmitSpeech(message) {
+    if (!inRoom) {
+        return; // Don't transcribe audio when not connected to a room.
+    }
+
+    message = message.trim(); // Remove whitespace.
+
+    if (message.length == 0) {
+        return;
+    }
+
+    const msg = {
+        name: userName,
+        text: message,
+        type: 2,
+        uniqueId: myUniqueId
+    };
+
+    // Send message to all peers.
+    webrtc.sendToAll('msg', msg);
+    // Update our message list locally.
+    messages.push(msg);
+    updateChatMessages();
+}

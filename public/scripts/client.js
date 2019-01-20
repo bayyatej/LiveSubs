@@ -152,32 +152,6 @@ const updateChatMessages = () => {
     chatContentEl.animate({ scrollTop: scrollHeight }, 150);
 };
 
-function transmitSpeech(message) {
-    if (!inRoom) {
-        return; // Don't transcribe audio when inside room.
-    }
-
-    message = message.trim(); // Remove whitespace.
-
-    if (message.length == 0) {
-        return;
-    }
-
-    const msg = {
-        name: userName,
-        text: message,
-        type: 2,
-        uniqueId: myUniqueId
-    };
-
-    // Send message to all peers.
-    webrtc.sendToAll('msg', msg);
-    // Update our message list locally.
-    messages.push(msg);
-    updateChatMessages();
-}
-
-
 window.addEventListener('load', () => {
     // Setup language dropdown.
     $('#langDropdown').dropdown('set selected', 'English');
