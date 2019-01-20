@@ -21,24 +21,23 @@ const languages = [
         htmlLangCode: "en-US",
         maxSubtitleChars: 96
     },
-    {//Afrikaans
-        displayName:"Afrikaans",
+    { // Afrikaans
+        displayName: "Afrikaans",
         translateLangCode: "af",
         htmlLangCode: "af",
         maxSubtitleChars: 96
     },
-    {//Arabic (Jordan)
-        displayName: "Arabic",
+    { // Arabic (Jordan)
+        displayName: "العَرَبِيَّة",
         translateLangCode: "ar",
         htmlLangCode: "ar-JO",
-        maxSubChars: 60
-
+        maxSubtitleChars: 60
     },
-    {//Bulgarian
-        displayName: "Bulgarian",
-        translateLangCode: "",
+    { // Bulgarian
+        displayName: "български",
+        translateLangCode: "bg",
         htmlLangCode: "bg",
-        maxSubChars: 96
+        maxSubtitleChars: 96
     },
     { // Chinese (Simplified)
         displayName: "中文 (简体)",
@@ -46,72 +45,81 @@ const languages = [
         htmlLangCode: "zh-CN",
         maxSubtitleChars: 48
     },
-    {//Czech
-        displayName: "Czech",
-        translateLangCode: "",
+    { // Czech
+        displayName: "Čeština",
+        translateLangCode: "cs",
         htmlLangCode: "cs",
-        maxSubChars: 96
-    },{//German
-        displayName: "German",
-        translateLangCode: "",
+        maxSubtitleChars: 96
+    },
+    { // German
+        displayName: "Deutsch",
+        translateLangCode: "de",
         htmlLangCode: "de-DE",
         maxSubtitleChars: 96
     },
-    {//Spanish
-        displayName: "",
-        translateLangCode: "",
+    { // Spanish
+        displayName: "Español",
+        translateLangCode: "es",
         htmlLangCode: "es-SP",
         maxSubtitleChars: 96
     },
-    {//Finnish
-        displayName: "Finnish",
-        translateLangCode: "",
+    { // Finnish
+        displayName: "Suomen Kieli",
+        translateLangCode: "fi",
         htmlLangCode: "fi",
-        maxSubChars: 96
-    },    
+        maxSubtitleChars: 96
+    },
     { // French
         displayName: "Français",
         translateLangCode: "fr",
         htmlLangCode: "fr-FR",
         maxSubtitleChars: 96
-    },{ // Japanese
+    },
+    { // Japanese
         displayName: "日本語",
         translateLangCode: "ja",
         htmlLangCode: "ja-JP",
         maxSubtitleChars: 48
-    },{//Korean
-        displayName: "Korean",
-        translateLangCode: "",
+    },
+    { // Korean
+        displayName: "한국어",
+        translateLangCode: "ko",
         htmlLangCode: "ko",
         maxSubtitleChars: 48
-    },{//Dutch
-        displayName: "Dutch",
-        translateLangCode: "",
+    },
+    { // Dutch
+        displayName: "Nederlands",
+        translateLangCode: "nl",
         htmlLangCode: "nl-NL",
-        maxSubChars: 96
-    },{//Portuguese
-        displayName: "P",
-        translateLangCode: "",
+        maxSubtitleChars: 96
+    },
+    { // Portuguese
+        displayName: "Português",
+        translateLangCode: "pt",
         htmlLangCode: "pt-PT",
         maxSubtitleChars: 96
-    },{//Russian
-        displayName: "",
-        translateLangCode: "",
+    },
+    { // Russian
+        displayName: "русский язык",
+        translateLangCode: "ru",
         htmlLangCode: "ru",
         maxSubtitleChars: 96
-    },{//Swedish
-        displayName: "",
-        translateLangCode: "",
+    },
+    { // Swedish
+        displayName: "Svenska",
+        translateLangCode: "sv",
         htmlLangCode: "sv-SE",
         maxSubtitleChars: 96
-    },{//Turkish
-        displayName: "",
-        translateLangCode: "",
+    },
+    { // Turkish
+        displayName: "Türkçe",
+        translateLangCode: "tr",
         htmlLangCode: "tr",
         maxSubtitleChars: 96
-    },{//Traditional Taiwanese
-        displayName: "",
-        translateLangCode: "",
+    },
+    { // Chinese (Traditional)
+        displayName: "中文 (繁體)",
+        translateLangCode: "zh-TW",
         htmlLangCode: "zh-TW",
         maxSubtitleChars: 48
     }
@@ -281,19 +289,18 @@ const updateChatMessages = () => {
 
 window.addEventListener('load', () => {
     // Setup language dropdown.
+    $('#langDropdown').dropdown('set selected', '[EN] English 🇺🇸');
+    $('#langDropdown').change(function () {
+        // Update language index.
+        languageIndex = $('#langDropdown').dropdown('get value');
+    });
+
     //request api key
     var apiKey = "";
     
     connection.onmessage = function (data) {
         apiKey = data.data;
-
     }
-    $('#langDropdown').dropdown('set selected', 'English');
-
-    $('#langDropdown').change(function () {
-        // Update language index.
-        languageIndex = $('#langDropdown').dropdown('get value');
-    });
 
     // Set a new helper function for comparison in Handlebars.
     Handlebars.registerHelper('equals', function (v1, v2, options) {
