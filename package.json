@@ -12,11 +12,9 @@
     "hark": "^1.2.3",
     "into-stream": "^4.0.0",
     "jquery": "^3.3.1",
-    "node-record-lpcm16": "^0.3.1",
     "semantic-ui-css": "^2.4.1",
     "serve": "^10.1.1",
     "simplewebrtc": "^3.0.2",
-    "websocket-stream": "^5.1.2",
     "ws": "^6.1.2"
   },
   "devDependencies": {},
