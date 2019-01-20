@@ -8,6 +8,7 @@ const chatEl = $('#chat');
 const formEl = $('.form');
 const messages = [];
 var userName = 'Undefined User';
+let lastid="";
 var inRoom = false;
 var myUniqueId = "";
 var subtitle = document.getElementById('subtitle');
@@ -422,6 +423,7 @@ window.addEventListener('load', () => {
                         }
 
                         // Move spotlight to user who just spoke
+                        setSpotlight(id)
                         setSubtitleText(message.text); // Reset subtitle.
                         gracePeriod = true;
                         setTimeout(function () {
@@ -449,6 +451,7 @@ window.addEventListener('load', () => {
             }
         }
         function setSpotlight(userId) {
+            console.log('switched');
             let newSpotlight = $('#' + userId + "_video_incoming").detach();
             let oldSpotlight = $('#spotlight').children("video").detach();
             
@@ -460,12 +463,12 @@ window.addEventListener('load', () => {
         }
         // Remote video was added
         webrtc.on('videoAdded', (video, peer) => {
-            const id = webrtc.getDomId(peer);
+            if(lastid== webrtc.getDomId(peer))return;
+            lastid = webrtc.getDomId(peer);
             // console.log($('#spotlight video').length);
             if ($('#spotlight video').length<1) {
                 $('#spotlight').prepend(video);
-            }
-            else {
+            }else {
                 remoteVideosEl.append(video);
             }
             remoteVideosCount += 1;
