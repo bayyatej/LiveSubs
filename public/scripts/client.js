@@ -1,6 +1,5 @@
 // Global constants.
 const ENTER_KEY = 13;
-const SUBTITLE_MULTILINE_THRESHOLD = 60; // In pixels. Subtitle height above this number = multiline styling.
 
 // Chat platform
 const chatTemplate = Handlebars.compile($('#chat-template').html());
@@ -11,7 +10,6 @@ const messages = [];
 var userName = 'Undefined User';
 var inRoom = false;
 var myUniqueId = "";
-var subtitleParent = document.getElementById('subtitleParent');
 var subtitle = document.getElementById('subtitle');
 // Translation and speech.
 // Translate -> Google Translate language code; HTML -> BCP-47.
@@ -160,21 +158,19 @@ function send() {
 
 function setSubtitleText(text) {
     subtitle.textContent = text;
-    $( '#subtitleParent' ).each(function ( key, value ) {
-        let targetHeight=60;
-        let currHeight=$(value).height();
-        let n = 35;
-    
-        $( value ).css( 'font-size', n );
-    
-        while ( $( value ).height() > targetHeight) {
-            $( value ).css( 'font-size', --n );
-        }
+    let subParent = $('#subtitleParent');
+    let curFontSize = 32;
+    let targetSubtitleHeight = curFontSize * 2; // Desired subtitles element height to approx. two lines.
 
-        // console.log("final text size: "+n);
+    subParent.css('font-size', curFontSize);
+
+    while(subParent.height() > targetSubtitleHeight) {
+        subParent.css('font-size', curFontSize);
+        curFontSize--;
+    }
     
-    });
-    subtitleParent.style.bottom = ($('#subtitle').height()+10)+'px';
+    // Automatically anchor subtitles to bottom of spotlight video.
+    subParent.css('bottom', subParent.height() + 10) + 'px';
 }
 
 function capitalizeSentence(sentence) {
@@ -312,13 +308,9 @@ window.addEventListener('load', () => {
                     $('#spotlight').prepend(newSpotlight);
                     $('#remoteVideos').append(oldSpotlight);
                 }
-
             }
 
             updateChatMessages();
-            /*
-        }
-*/
         }
     });
 
