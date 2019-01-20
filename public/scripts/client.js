@@ -230,10 +230,10 @@ window.addEventListener('load', () => {
     });
 
     // We got access to local camera
-    webrtc.on('localStream', (AVStream) => {
+    webrtc.on('localStream', (stream) => {
         myUniqueId = webrtc.connection.connection.id;
-
-        beginSpeechRecognition(AVStream.getAudioTracks()[0]);
+        console.log('avout to recognize speech');
+        beginSpeechRecognition();
         localVideoEl.show();
         var speechEvents = hark(stream, {});
         speechEvents.on('speaking', function () {

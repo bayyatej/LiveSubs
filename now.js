@@ -1,9 +1,0 @@
-{
-    "version": 2,
-    "builds": [
-      { "src": "*.html", "use": "@now/static" },
-      { "src": "*.css", "use": "@now/static" },
-      { "src": "*.json", "use": "@now/static" },
-      { "src": "*.js", "use": "@now/node" },
-    ]
-  }
