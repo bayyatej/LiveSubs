@@ -1,37 +1,16 @@
 function beginSpeechRecognition() {
     console.log('began');
     
-    // event emmited when connected
-    // ws.onopen = function () {
-    //     console.log('websocket is connected ...')
-    //     // sending a send event to websocket server
-    //     ws.send(JSON.stringify({'connected':[1,2,3,4],'isfake':true}))
-    // }
-    // event emmited when receiving message
-    // console.log(audiostream)
-    
-    // connection.onopen = function(event)
-    // {
-    //     var audio_16 = new Int16Array(audiostream.buffer);
-    //     console.log('sending',audio_16);
-    //     connection.send(audio_16);
-    // }
-    
-    
     window.SpeechRecognition = window.webkitSpeechRecognition || window.SpeechRecognition;
     
     const recognition = new window.SpeechRecognition();
-    // recognition.interimResults=true;
     recognition.onresult = (event) => {
         const speechToText = event.results[0][0].transcript;
         transmitSpeech(speechToText);
-        console.log(speechToText);
     }
     recognition.onaudiostart = function (event) {
-        console.log('started');
     }
     recognition.onaudioend = function (event) {
-        console.log('ended');
         recognition.stop();
         startRecognition(25);
     }
