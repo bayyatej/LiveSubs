@@ -403,10 +403,7 @@ window.addEventListener('load', () => {
                         }, 1000)
                     }
                 }
-
                 updateChatMessages();
-                // connection.send(JSON.stringify({ "data": data, "lang": languages[languageIndex]['translateLangCode'] }));
-
             }
 
         } else if (data.type === "hark") {
@@ -445,7 +442,6 @@ window.addEventListener('load', () => {
             else {
                 remoteVideosEl.append(video);
             }
-            // $(`#${id}`).html(video);
             remoteVideosCount += 1;
         });
     })
