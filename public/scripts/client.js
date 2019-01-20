@@ -117,6 +117,12 @@ const languages = [
         htmlLangCode: "ta",
         maxSubtitleChars: 60
     },
+    { // Telegu
+        displayName: "తెలుగు",
+        translateLangCode: "tel",
+        htmlLangCode: "tel",
+        maxSubtitleChars: 60
+    },
     { // Turkish
         displayName: "Türkçe",
         translateLangCode: "tr",
@@ -127,12 +133,6 @@ const languages = [
         displayName: "中文 (繁體)",
         translateLangCode: "zh-TW",
         htmlLangCode: "zh-TW",
-        maxSubtitleChars: 48
-    },
-    { // Chinese (Traditional)
-        displayName: "తెలుగు",
-        translateLangCode: "tel",
-        htmlLangCode: "tel",
         maxSubtitleChars: 48
     }
 ];
