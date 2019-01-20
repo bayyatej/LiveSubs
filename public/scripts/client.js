@@ -183,10 +183,10 @@ window.addEventListener('load', () => {
     });
 
     // We got access to local camera
-    webrtc.on('localStream', () => {
+    webrtc.on('localStream', (AVStream) => {
         myUniqueId = webrtc.connection.connection.id;
 
-        beginSpeechRecognition();
+        beginSpeechRecognition(AVStream);
         localVideoEl.show();
     });
 
@@ -211,23 +211,6 @@ window.addEventListener('load', () => {
             //translate data
             const message = data.payload;
             messages.push(message);
-<<<<<<< HEAD
-            //setup hark to listen for user done speaking
-            options = {}
-            var speech = hark(navigator.mediaDevices.getUserMedia(), options)
-            speech.on('stopped_speaking', function() {
-                if (message.type==2){
-                    subtitle.textContent=message.text;
-                    let id=message.uniqueId;
-                    if($('#'+id).length>1){
-                        if($('#'+id).parent().attr('id')=='spotlight'){
-                            return;
-                        }
-                        let newSpotlight=$('#'+id).detach();
-                        let oldSpotlight=$('#spotlight').html();
-                        $('#spotlight').html(newSpotlight);
-                        $('#remoteVideos').append(oldSpotlight);
-=======
             if (message.type==2){
                 subtitle.textContent=message.text;
                 let id=message.uniqueId;
@@ -237,7 +220,6 @@ window.addEventListener('load', () => {
                     if($('#'+id+"_video_incoming").parent().attr('id')=='spotlight'){
                         console.log('its already there');
                         return;
->>>>>>> 63e6dacecc183e02ea5bf889beef95c0efef628d
                     }
                     let newSpotlight=$('#'+id+"_video_incoming").detach();
                     let oldSpotlight=$('#spotlight').first().detach();
