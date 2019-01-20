@@ -40,7 +40,7 @@ body {
     z-index: 1;
     font-size: 2rem;
     text-align: center !important;
-    line-height: 2rem;
+    line-height: 130%;
 }
 .login {
     position: relative;

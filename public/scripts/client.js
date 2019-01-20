@@ -159,33 +159,22 @@ function send() {
 }
 
 function setSubtitleText(text) {
-
     subtitle.textContent = text;
-    $( '.box' ).each(function ( i, box ) {
-
-        var width = $( box ).width(),
-            html = '<span style="white-space:nowrap"></span>',
-            line = $( box ).wrapInner( html ).children()[ 0 ],
-            n = 100;
+    $( '#subtitleParent' ).each(function ( key, value ) {
+        let targetHeight=60;
+        let currHeight=$(value).height();
+        let n = 35;
     
-        $( box ).css( 'font-size', n );
+        $( value ).css( 'font-size', n );
     
-        while ( $( line ).width() > width ) {
-            $( box ).css( 'font-size', --n );
+        while ( $( value ).height() > targetHeight) {
+            $( value ).css( 'font-size', --n );
         }
-    
-        $( box ).text( $( line ).text() );
+
+        // console.log("final text size: "+n);
     
     });
-    var subtitleHeight = $('#subtitle').height();
-    let isMultiLine = (subtitleHeight > SUBTITLE_MULTILINE_THRESHOLD);
-
-    if (isMultiLine) {
-        subtitleParent.style.bottom = '62px'; // TWO LINES: Push subtitles up.
-    }
-    else {
-        subtitleParent.style.bottom = '34px'; // ONE LINE: Subtitle back to bottom.
-    }
+    subtitleParent.style.bottom = ($('#subtitle').height()+10)+'px';
 }
 
 function capitalizeSentence(sentence) {
@@ -288,7 +277,7 @@ window.addEventListener('load', () => {
                 // Received transcription data.
 
                 let id = message.uniqueId;
-                console.log(id);
+                // console.log(id);
                 if ($('#' + id + "_video_incoming").length > 0) {
                     if ($('#' + id + "_video_incoming").parent().attr('id') == 'spotlight') {
                         let fullText = subtitle.textContent;
@@ -308,7 +297,7 @@ window.addEventListener('load', () => {
 
                         setSubtitleText(fullText);
                         updateChatMessages();
-                        console.log('spotlight still speaking...');
+                        // console.log('spotlight still speaking...');
                         return;
                     }
 
@@ -324,7 +313,6 @@ window.addEventListener('load', () => {
                     $('#remoteVideos').append(oldSpotlight);
                 }
 
-                console.log('updated');
             }
 
             updateChatMessages();
@@ -336,7 +324,7 @@ window.addEventListener('load', () => {
 
     // Remote video was added
     webrtc.on('videoAdded', (video, peer) => {
-        console.log(remoteVideosCount + " videos, now adding", video);
+        // console.log(remoteVideosCount + " videos, now adding", video);
         const id = webrtc.getDomId(peer);
         if (remoteVideosCount === 0) {
             $('#spotlight').prepend(video);

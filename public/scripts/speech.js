@@ -1,5 +1,5 @@
 function beginSpeechRecognition() {
-    console.log('began');
+    console.log('called Speech recognition function');
     window.SpeechRecognition = window.webkitSpeechRecognition || window.SpeechRecognition;
     
     const recognition = new window.SpeechRecognition();
@@ -10,10 +10,10 @@ function beginSpeechRecognition() {
         console.log(speechToText);
     }
     recognition.onaudiostart = function (event) {
-        console.log('started');
+        console.log('started speech recognition');
     }
     recognition.onaudioend = function (event) {
-        console.log('ended');
+        console.log('ended speech recognition');
         recognition.stop();
         startRecognition(25);
     }
