@@ -152,7 +152,7 @@ const createRoom = (roomName) => {
         showChatRoom(name);
     });
 };
-
+$('video').on('ended',function(){ $(this).remove(); });
 // Join existing Chat Room
 const joinRoom = (roomName) => {
     webrtc.joinRoom(roomName);
@@ -462,7 +462,8 @@ window.addEventListener('load', () => {
         webrtc.on('videoAdded', (video, peer) => {
             
             const id = webrtc.getDomId(peer);
-            if (remoteVideosCount === 0) {
+            // console.log($('#spotlight video').length);
+            if ($('#spotlight video').length<1) {
                 $('#spotlight').prepend(video);
             }
             else {
