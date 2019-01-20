@@ -21,6 +21,7 @@ body {
 .userCamera{
     z-index: 3;
     position:absolute;
+    transform: scaleX(1) !important;
     height: 25vh;
     left: 3px;
     top: 3px;

@@ -88,17 +88,17 @@
             <div class="content">
                 {{#equals type 0}}
                 <!-- Room announcements -->
-                <div style="display: inline;color:#f37b18"> {{ text }} </div>
+                <div style="display: inline;color:#f37b18">{{ text }}</div>
                 {{/equals}}
 
                 {{#equals type 1}}
-                <!-- Text chat -->
-                <div style="display: inline;color:#769ac9"> {{ name }}</div>: {{ text }}
+                <!-- Text chat (blue gray) -->
+                <div style="display: inline;color:#769ac9">{{ name }}</div>: {{ text }}
                 {{/equals}}
 
                 {{#equals type 2}}
-                <!-- Speech transcription -->
-                <div style="display: inline;color:#4cc548"> {{ name }} said </div> {{ text }}
+                <!-- Speech transcription (green) -->
+                <div style="display: inline;color:#4cc548">{{ name }}</div>: {{ text }}
                 {{/equals}}
             </div>
         </div>

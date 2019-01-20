@@ -37,4 +37,16 @@ function beginSpeechRecognition(AVStream) {
     // // Start recognition loop.
     // recognition.start();
 
+    function startRecognition(delay) {
+        setTimeout(function () {
+            try {
+                recognition.lang = languages[languageIndex].htmlLangCode;
+                recognition.start();
+            } catch (e) {
+                startRecognition(delay);
+            }
+        }, delay)
+    }
+    // Start recognition loop.
+    startRecognition(10);
 }

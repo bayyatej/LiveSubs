@@ -12,7 +12,11 @@
     "semantic-ui-css": "^2.4.1",
     "serve": "^10.1.1",
     "simplewebrtc": "^3.0.2",
+<<<<<<< HEAD
     "websocket-stream": "^5.1.2"
+=======
+    "ws": "^6.1.2"
+>>>>>>> 6af095ffdda07f62607cc31a73947249bf72b33c
   },
   "devDependencies": {},
   "scripts": {

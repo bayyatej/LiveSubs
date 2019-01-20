@@ -7,7 +7,9 @@ const chatContentTemplate = Handlebars.compile($('#chat-content-template').html(
 const chatEl = $('#chat');
 const formEl = $('.form');
 const messages = [];
-let userName = 'Undefined User';
+const MAX_SUBTITLE_LENGTH = 90;//max subtitle length to append (chars)
+var userName = 'Undefined User';
+var inRoom = false;
 var myUniqueId = "";
 var subtitle = document.getElementById('subtitle');
 // Translation and speech.
@@ -51,27 +53,45 @@ const webrtc = new SimpleWebRTC({
 });
 
 const showChatRoom = (room) => {
-    // Hide room join form.
-    formEl.hide();
-    let lang = languages[languageIndex].displayName;
+    inRoom = true;
+
     // Update chat header (room name and selected language).
+    let lang = languages[languageIndex].displayName;
     const html = chatTemplate({ room, lang });
     chatEl.html(html);
 
+    // Hide login screen.
+    formEl.hide();
     $('#roomGrid').removeClass("center aligned page");
     $('#chatSegment').removeClass("login").addClass("right wide sidebar visible");
 
-    // Post message for joining user.
-    const joinMsg = {
+    // Clear chat/transcription log.
+    messages.length = 0;
+
+    // Post welcome message for yourself.
+    const joinMsgLocal = {
         name: '',
         text: 'Hello, ' + userName + '. Welcome to ' + room + '!',
         type: 0,
         uniqueId: ''
     };
 
-    messages.push(joinMsg);
+    messages.push(joinMsgLocal);
     updateChatMessages();
 
+    // Broadcast the user's name to other users (200 ms delay to workaround bug).
+    setTimeout(function () {
+        const joinMsgOthers = {
+            name: '',
+            text: userName + ' joined the room!',
+            type: 0,
+            uniqueId: ''
+        };
+
+        webrtc.sendToAll('msg', joinMsgOthers);
+    }, 200);
+
+    // Setup messaging event listeners.
     $('#submitMsgBtn').on('click', () => {
         // Add listener for clicking submit button.
         const message = $('#msgField').val();
@@ -134,6 +154,10 @@ const updateChatMessages = () => {
 };
 
 function transmitSpeech(message) {
+    if (!inRoom) {
+        return; // Don't transcribe audio when inside room.
+    }
+
     message = message.trim(); // Remove whitespace.
 
     if (message.length == 0) {
@@ -159,7 +183,7 @@ window.addEventListener('load', () => {
     // Setup language dropdown.
     $('#langDropdown').dropdown('set selected', 'English');
 
-    $('#langDropdown').change(function() {
+    $('#langDropdown').change(function () {
         // Update language index.
         languageIndex = $('#langDropdown').dropdown('get value');
     });
@@ -208,44 +232,78 @@ window.addEventListener('load', () => {
     // Receive message from remote user
     webrtc.connection.on('message', (data) => {
         if (data.type === 'msg') {
-            //translate data
-            const message = data.payload;
-            messages.push(message);
-            if (message.type==2){
-                subtitle.textContent=message.text;
-                let id=message.uniqueId;
-                console.log(id);
-                if($('#'+id+"_video_incoming").length>0){
-                    console.log('found id');
-                    if($('#'+id+"_video_incoming").parent().attr('id')=='spotlight'){
-                        console.log('its already there');
-                        return;
+            // Received message data from room, chat messages, transcriptions, etc.
+            let message = data.payload;
+            var requestURL = "https://translate.googleapis.com/translate_a/single?client=gtx&sl=auto&tl=" +
+                languages[languageIndex].translateLangCode + "&dt=t&q=" + encodeURI(message.text);
+            var request = new XMLHttpRequest();
+            request.open('GET', requestURL);
+            request.responseType = 'text';
+            request.send();
+            console.log(requestURL);
+            request.onload = function () {
+                let resp=JSON.parse('{"data":'+request.response+'}');
+                console.log(resp);
+                message.text = resp.data[0][0][0];
+                messages.push(message);
+                //process the message.
+                if (message.type == 2) {
+                    // Received transcription data.
+
+                    let id = message.uniqueId;
+                    console.log(id);
+                    if ($('#' + id + "_video_incoming").length > 0) {
+                        console.log('found id');
+                        if ($('#' + id + "_video_incoming").parent().attr('id') == 'spotlight') {
+                            console.log('its already there');
+                            let fullText = subtitle.textContent + message.text;
+                            if (fullText.length > MAX_SUBTITLE_LENGTH) {
+                                fullText = '..'+fullText.substr(fullText.length - MAX_SUBTITLE_LENGTH, fullText.length);
+                            }
+                            subtitle.textContent =fullText;
+                            updateChatMessages();
+                            return;
+                        }
+                        //move spotlight to user who just spoke
+                        subtitle.textContent = message.text;
+                        let newSpotlight = $('#' + id + "_video_incoming").detach();
+                        let oldSpotlight = $('#spotlight').children("video").detach();
+                        console.log(newSpotlight);
+                        console.log(oldSpotlight);
+                        $('#spotlight').append(newSpotlight);
+                        $('#remoteVideos').append(oldSpotlight);
                     }
-                    let newSpotlight=$('#'+id+"_video_incoming").detach();
-                    let oldSpotlight=$('#spotlight').first().detach();
-                    console.log(newSpotlight);
-                    console.log(oldSpotlight);
-                    $('#spotlight').append(newSpotlight);
-                    $('#remoteVideos').append(oldSpotlight);
+
+                    console.log('updated');
                 }
-                console.log('updated');
+
+                updateChatMessages();
             }
-                
-            //show this user
-            updateChatMessages();
+
         }
     });
 
     // Remote video was added
     webrtc.on('videoAdded', (video, peer) => {
-        console.log(remoteVideosCount)
+        console.log(remoteVideosCount + " videos, now adding", video);
         const id = webrtc.getDomId(peer);
         if (remoteVideosCount === 0) {
-            $('#spotlight').html(video);
+            $('#spotlight').append(video);
         } else {
             remoteVideosEl.append(video);
         }
         // $(`#${id}`).html(video);
         remoteVideosCount += 1;
     });
+    var ws = new WebSocket('ws://localhost:40510');
+    // event emmited when connected
+    // ws.onopen = function () {
+    //     console.log('websocket is connected ...')
+    //     // sending a send event to websocket server
+    //     ws.send(JSON.stringify({'connected':[1,2,3,4],'isfake':true}))
+    // }
+    // event emmited when receiving message 
+    ws.onmessage = function (ev) {
+        console.log(ev);
+    }
 });
