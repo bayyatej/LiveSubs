@@ -206,11 +206,11 @@ const updateChatMessages = () => {
 window.addEventListener('load', () => {
     // Setup language dropdown.
     //request api key
-    var apiKey="";
+    var apiKey = "";
     connection.send('key');
     connection.onmessage = function (data) {
-        apiKey=data.data;
-    
+        apiKey = data.data;
+
     }
     $('#langDropdown').dropdown('set selected', 'English');
 
@@ -281,9 +281,8 @@ window.addEventListener('load', () => {
             let maxSubChars = languages[languageIndex].maxSubtitleChars;
 
             // Translate the message!
-
             var requestURL = "https://translate.googleapis.com/translate_a/single?client=gtx&sl=auto&tl=" +
-                languages[languageIndex].translateLangCode + "&dt=t&q=" + encodeURI(message.text) + "&key="+apiKey;//AIzaSyBsGGlwPghAxSwIhaRANfXBbV65fq2OMWM";
+                languages[languageIndex].translateLangCode + "&dt=t&q=" + encodeURI(message.text) + "&key=" + apiKey;
             var request = new XMLHttpRequest();
             request.open('GET', requestURL);
             request.responseType = 'text';

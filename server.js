@@ -1,11 +1,9 @@
 const express = require('express');
 const expressWebSocket = require('express-ws');
-const fs = require('fs');
-const websocketStream = require('websocket-stream/stream');
 const app = express();
 const port = 8080;
 // const intoStream = require('into-stream');
-var apiKey="AIzaSyBsGGlwPghAxSwIhaRANfXBbV65fq2OMWM";
+var apiKey = "AIzaSyBsGGlwPghAxSwIhaRANfXBbV65fq2OMWM";
 //google cloud speech to text API setup
 // const record = require('node-record-lpcm16');
 // Imports the Google Cloud client library
@@ -17,14 +15,14 @@ var apiKey="AIzaSyBsGGlwPghAxSwIhaRANfXBbV65fq2OMWM";
 // const encoding = 'LINEAR16';
 // const sampleRateHertz = 48000;
 // const languageCode = 'en-US';
-const {Translate} = require('@google-cloud/translate');
+const { Translate } = require('@google-cloud/translate');
 
-// Your Google Cloud Platform project ID
+// GCP project ID
 const projectId = 'livesub-229106';
 
 // Instantiates a client
 const translate = new Translate({
-    projectId: projectId,
+  projectId: projectId,
 });
 
 // const request = {
@@ -38,80 +36,79 @@ const translate = new Translate({
 // };
 
 
-
 //express server setup
 app.all('/', function (req, res, next) {
-    res.header("Access-Control-Allow-Origin", "*");
-    res.header("Access-Control-Allow-Headers", "X-Requested-With");
-    next();
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Headers", "X-Requested-With");
+  next();
 });
 var WebSocketServer = require('ws').Server;
 var wss = new WebSocketServer({ port: 40510 });
 wss.on('connection', function (ws) {
-    // Create a recognize stream
-    // const recognizeStream = client
-    // .streamingRecognize(request)
-    // .on('error', function (e) {
-    //     console.log('error');
-    //     console.log(e);
-    // })
-    // .on('data', function (data) {
+  // Create a recognize stream
+  // const recognizeStream = client
+  // .streamingRecognize(request)
+  // .on('error', function (e) {
+  //     console.log('error');
+  //     console.log(e);
+  // })
+  // .on('data', function (data) {
 
-    //     process.stdout.write(
-    //         data.results[0] && data.results[0].alternatives[0]
-    //             ? `Transcription: ${data.results[0].alternatives[0].transcript}\n`
-    //             : `\n\nReached transcription time limit, press Ctrl+C\n`
-    //     );
-    //     console.log(data);
+  //     process.stdout.write(
+  //         data.results[0] && data.results[0].alternatives[0]
+  //             ? `Transcription: ${data.results[0].alternatives[0].transcript}\n`
+  //             : `\n\nReached transcription time limit, press Ctrl+C\n`
+  //     );
+  //     console.log(data);
+  // }
+  // );
+  // ws.send(apikey);
+  // recognizeStream.write(request);
+  ws.on('message', function (data) {
+    if (data === "key") {
+      ws.send(apiKey);
+    }
+
+    //MODIFY: data.data.payload.text
+    //RETURN: data.data
+    //LANGUAGE: data.lang
+    // data=JSON.parse(data);
+    // const apikey="AIzaSyBsGGlwPghAxSwIhaRANfXBbV65fq2OMWM";
+    // console.log("data: %j",data.data);
+    // var requestURL = "https://translate.googleapis.com/translate_a/single?client=gtx&sl=auto&tl=" +
+    // data.lang + "&dt=t&q=" + encodeURI(data.data.payload.text)+"&key=";
+    // var request = new XMLHttpRequest();
+    // request.open('GET', requestURL);
+    // request.responseType = 'text';
+    // request.send();
+
+    // console.log(requestURL);
+
+    // request.onload = function () {
+    //     let resp = JSON.parse('{"data":' + request.response + '}');
+    //     console.log(resp);
+    //     data.data.payload.text = resp.data[0][0][0];
+    //     ws.send(data.data);
     // }
-    // );
-    // ws.send(apikey);
-    // recognizeStream.write(request);
-    ws.on('message', function (data) {
-        if(data==="key"){
-            ws.send(apiKey);
-        }
-        
-        //MODIFY: data.data.payload.text
-        //RETURN: data.data
-        //LANGUAGE: data.lang
-        // data=JSON.parse(data);
-        // const apikey="AIzaSyBsGGlwPghAxSwIhaRANfXBbV65fq2OMWM";
-        // console.log("data: %j",data.data);
-        // var requestURL = "https://translate.googleapis.com/translate_a/single?client=gtx&sl=auto&tl=" +
-        // data.lang + "&dt=t&q=" + encodeURI(data.data.payload.text)+"&key=";
-        // var request = new XMLHttpRequest();
-        // request.open('GET', requestURL);
-        // request.responseType = 'text';
-        // request.send();
-
-        // console.log(requestURL);
-
-        // request.onload = function () {
-        //     let resp = JSON.parse('{"data":' + request.response + '}');
-        //     console.log(resp);
-        //     data.data.payload.text = resp.data[0][0][0];
-        //     ws.send(data.data);
-        // }
-        // translate
-        // .translate(data.data.payload.text, data.lang)
-        // .then(results => {
-        //     const translation = results.data;
-        //     data.data.payload.text=translation;
-        //     ws.send(data.data);
-        // })
-        // .catch(err => {
-        //     console.error('ERROR:', err);
-        //     ws.send(false);
-        // });
-    })
-    //PSEUDOCODE
-    /*ws.on('message',function(){
-        //send to cloud speech api
-        send to translate api?maybe
-        on result: ws.send(detectedspeech)
-  
-    })*/
+    // translate
+    // .translate(data.data.payload.text, data.lang)
+    // .then(results => {
+    //     const translation = results.data;
+    //     data.data.payload.text=translation;
+    //     ws.send(data.data);
+    // })
+    // .catch(err => {
+    //     console.error('ERROR:', err);
+    //     ws.send(false);
+    // });
+  })
+  //PSEUDOCODE
+  /*ws.on('message',function(){
+      //send to cloud speech api
+      send to translate api?maybe
+      on result: ws.send(detectedspeech)
+ 
+  })*/
 })
 // Set 'public' folder as root
 app.use(express.static('public'));
@@ -122,10 +119,10 @@ app.use((req, res) => res.sendFile(`${__dirname}/public/index.html`));
 
 // extend express app with app.ws()
 expressWebSocket(app, null, {
-    // ws options here
-    perMessageDeflate: false,
+  // ws options here
+  perMessageDeflate: false,
 });
 
 app.listen(port, () => {
-    console.log('listening on ' + port);
+  console.log('Listening on ' + port);
 });
