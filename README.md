@@ -1,5 +1,5 @@
 # LiveSubs
-LiveSubs is a video chat web application that utilizes real-time translation captioning to improve communication between multiple cultures.
+LiveSubs is a video chat web application that utilizes real-time translation captioning to improve communication between multiple cultures. Whether it is a simple video call with your friends across the world or an international business meeting, LiveSubs has you covered!
 
 This was created during the 36-hour hackathon, [SpartaHack V](https://spartahack.com).
 
