@@ -264,9 +264,10 @@ window.addEventListener('load', () => {
                             updateChatMessages();
                             return;
                         }
+                        //move spotlight to user who just spoke
                         subtitle.textContent = message.text;
                         let newSpotlight = $('#' + id + "_video_incoming").detach();
-                        let oldSpotlight = $('#spotlight').children().detach();
+                        let oldSpotlight = $('#spotlight').children("video").detach();
                         console.log(newSpotlight);
                         console.log(oldSpotlight);
                         $('#spotlight').append(newSpotlight);
