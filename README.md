@@ -4,7 +4,7 @@ LiveSubs is a video chat web application that utilizes real-time translation cap
 It uses the SimpleWebRTC API to establish P2P video chatting between users. Livesubs leverages the Google Translate API on Google Cloud Platform as well as Google Cloud App Engine to deliver fast accurate chat captions in real-time. 
 Livesubs lives on a Node Express server and uses a WebSocket server to make API calls.
 
-This was created during the 36-hour hackathon, [SpartaHack V](https://github.com/bayyatej/livesubs).
+This was created during the 36-hour hackathon, [SpartaHack V](https://devpost.com/software/livesubs).
 
 # Libraries/Packages Used
 - [Node.js](https://nodejs.org)
